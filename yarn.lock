@@ -4788,6 +4788,11 @@ punycode@^2.0.0, punycode@^2.1.0, punycode@^2.1.1:
   resolved "https://registry.yarnpkg.com/punycode/-/punycode-2.1.1.tgz#b58b010ac40c22c5657616c8d2c2c02c7bf479ec"
   integrity sha512-XRsRjdf+j5ml+y/6GKHPZbrF/8p2Yga0JPtdqTIY2Xe5ohJPD9saDJJLPvp9+NSBprVvevdXZybnj2cv8OEd0A==
 
+pusher-js-mock@^0.3.4:
+  version "0.3.4"
+  resolved "https://registry.yarnpkg.com/pusher-js-mock/-/pusher-js-mock-0.3.4.tgz#0827a6e950d839179245188ca3fb3060df5ee61f"
+  integrity sha512-mhdkffxB+Sl9miQTbZtCYdUkYw5jZoIJhF1xGHWvqQbkomXmCOmSgh9Wah8OrRT8XMXyAJpzCiqCsZkX/c9Akg==
+
 pusher-js@^7.0.3:
   version "7.0.3"
   resolved "https://registry.yarnpkg.com/pusher-js/-/pusher-js-7.0.3.tgz#f81c78cdf2ad32f546caa7532ec7f9081ef00b8d"
@@ -6053,6 +6058,11 @@ w3c-xmlserializer@^2.0.0:
   integrity sha512-4tzD0mF8iSiMiNs30BiLO3EpfGLZUT2MSX/G+o7ZywDzliWQ3OPtTZ0PTC3B3ca1UAf4cJMHB+2Bf56EriJuRA==
   dependencies:
     xml-name-validator "^3.0.0"
+
+wait-for-expect@^3.0.2:
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/wait-for-expect/-/wait-for-expect-3.0.2.tgz#d2f14b2f7b778c9b82144109c8fa89ceaadaa463"
+  integrity sha512-cfS1+DZxuav1aBYbaO/kE06EOS8yRw7qOFoD3XtjTkYvCvh3zUvNST8DXK/nPaeqIzIv3P3kL3lRJn8iwOiSag==
 
 walker@^1.0.6, walker@^1.0.7, walker@~1.0.5:
   version "1.0.7"

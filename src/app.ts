@@ -4,7 +4,7 @@ import { FastifyPluginAsync } from 'fastify'
 import fastifyEnv from 'fastify-env'
 
 export type AppOptions = {
-  // Place your custom options for app below here.
+  logger: true
 } & Partial<AutoloadPluginOptions>
 
 const app: FastifyPluginAsync<AppOptions> = async (
@@ -50,6 +50,7 @@ const app: FastifyPluginAsync<AppOptions> = async (
   // define your routes in one of these
   void fastify.register(AutoLoad, {
     dir: join(__dirname, 'services'),
+    ignorePattern: /.*(types|utils).*/,
     options: opts,
   })
 }

@@ -6,7 +6,7 @@ jest.mock('ethers')
 
 const WalletMock = EtherWallet as jest.Mocked<typeof EtherWallet>
 
-describe('Wallet', () => {
+describe('WalletRepoUtils', () => {
   let mnemonic: string
   const addressMock = '0x27357319d22757483e1f64330068796E21C9b6ab'
   const balanceMock = BigNumber.from('10')
