@@ -56,7 +56,7 @@ const Wallet = {
   },
 }
 
-describe('App', () => {
+describe('Wallets', () => {
   let app: FastifyInstance
   let ids: string[] = []
   beforeAll(async () => {
