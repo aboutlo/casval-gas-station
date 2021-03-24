@@ -15,8 +15,11 @@ const app: FastifyPluginAsync<AppOptions> = async (
     .register(fastifyEnv, {
       schema: {
         type: 'object',
-        required: ['DEFAULT_WALLET_MNEMONIC'],
         properties: {
+          // PORT: {
+          //   type: 'string',
+          //   default: '3000',
+          // },
           DEFAULT_WALLET_MNEMONIC: {
             type: 'string',
           },
@@ -24,7 +27,7 @@ const app: FastifyPluginAsync<AppOptions> = async (
       },
       dotenv: true,
     })
-    .ready((err) => {
+    .ready(async(err) => {
       if (err) console.error(err)
     })
   // Place here your custom code!
@@ -53,6 +56,10 @@ const app: FastifyPluginAsync<AppOptions> = async (
     ignorePattern: /.*(types|utils).*/,
     options: opts,
   })
+
+  // TODO USE https://github.com/fastify/env-schema
+  // // 0.0.0.0 is required for docker
+  // void fastify.listen(process.env.PORT || 3000, '0.0.0.0')
 }
 
 declare module 'fastify' {

@@ -9,9 +9,9 @@
   "scripts": {
     "test": "jest",
     "test:watch": "jest --watchAll --detectOpenHandles",
-    "start": "npm run build && fastify start -l info dist/app.js",
+    "start": "FASTIFY_ADDRESS=0.0.0.0 fastify start -l info dist/app.js",
     "build": "tsc",
-    "dev": "tsc && concurrently -k -p \"[{name}]\" -n \"TypeScript,App\" -c \"yellow.bold,cyan.bold\"  \"tsc -w\" \"fastify start -w -l info -P dist/app.js\""
+    "dev": "tsc && concurrently -k -p \"[{name}]\" -n \"TypeScript,App\" -c \"yellow.bold,cyan.bold\"  \"tsc -w\" \"FASTIFY_ADDRESS=0.0.0.0 fastify start -w -l info -P dist/app.js\""
   },
   "keywords": [],
   "author": "",
