@@ -8,8 +8,11 @@ export interface SupportPluginOptions {
 // The use of fastify-plugin is required to be able
 // to export the decorators to the outer scope
 export default fp<SupportPluginOptions>(async (fastify, opts) => {
+  const walletRepo = new Wallet()
+  walletRepo.create(fastify.config.DEFAULT_WALLET_MNEMONIC)
+
   fastify.decorate('repos', {
-    walletRepo: new Wallet(),
+    walletRepo,
   })
 })
 

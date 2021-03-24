@@ -13,7 +13,7 @@ export class Wallet implements Repo<any> {
     this.storage = new Map()
   }
 
-  async create(mnemonic: string, path = DEFAULT_DERIVATION_PATH) {
+  create(mnemonic: string, path = DEFAULT_DERIVATION_PATH) {
     const wallet = EtherWallet.fromMnemonic(mnemonic, path)
     const provider = getDefaultProvider(CONFIG.network, {
       etherscan: CONFIG.etherscan[CONFIG.network].apiKey,
@@ -34,21 +34,22 @@ export class Wallet implements Repo<any> {
     return { address: wallet.address }
   }
 
-  async find(address: string) {
+  // async find(address: string) {
+  //   const wallet = this.storage.get(address)
+  //   if (!wallet) throw new Error(`Wallet ${address} not founds`)
+  //   return wallet.getBalance().then((balance) => {
+  //     return { [address]: balance.toString() }
+  //   })
+  // }
+
+  find(address: string) {
     const wallet = this.storage.get(address)
     if (!wallet) throw new Error(`Wallet ${address} not founds`)
-    return wallet.getBalance().then((balance) => {
-      return { [address]: balance.toString() }
-    })
+    return wallet
   }
 
-  async findAll() {
-    const addresses = Array.from(this.storage.keys()).map((key) => key)
-    return Promise.all(
-      addresses.map((address) => {
-        return this.find(address)
-      })
-    )
+  findAll(): EtherWallet[] {
+    return Array.from(this.storage.entries()).map(([key, wallet]) => wallet)
   }
 
   async delete(address: string) {
