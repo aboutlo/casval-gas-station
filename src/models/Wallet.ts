@@ -2,7 +2,11 @@ import { Wallet as EtherWallet, getDefaultProvider } from 'ethers'
 import { CONFIG } from '../config'
 const DEFAULT_DERIVATION_PATH = `m/44'/60'/0'/0/0`
 
-export class Wallet {
+interface Repo<T> {
+  // create: (payload: Partial<T>) => T
+}
+
+export class Wallet implements Repo<any> {
   private storage: Map<string, EtherWallet>
 
   constructor() {
