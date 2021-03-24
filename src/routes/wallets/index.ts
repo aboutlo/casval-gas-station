@@ -1,9 +1,9 @@
 import { FastifyPluginAsync, RequestGenericInterface } from 'fastify'
 import { Wallet } from 'ethers'
 
-// import { Wallet } from '../../models/Wallet'
+// import { WalletRepo } from '../../models/WalletRepo'
 
-// const walletRepo = new Wallet()
+// const walletRepo = new WalletRepo()
 
 interface FindRequest extends RequestGenericInterface {
   Params: {

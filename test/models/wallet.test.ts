@@ -1,6 +1,6 @@
 import { Wallet as EtherWallet } from 'ethers'
 import { BigNumber } from '@ethersproject/bignumber'
-import { Wallet } from '../../src/models/Wallet'
+import { WalletRepo } from '../../src/models/WalletRepo'
 
 jest.mock('ethers')
 
@@ -16,41 +16,34 @@ describe('Wallet', () => {
       'stay apart adjust retire frame lumber usual amazing smoke worry outside wash'
   })
   beforeEach(() => {
-    WalletMock.fromMnemonic = jest.fn().mockImplementation(() => ({
-      address: addressMock,
-      getBalance: jest.fn().mockImplementation(() => {
-        return Promise.resolve(BigNumber.from('10'))
-      }),
-      connect: jest.fn(),
-    }))
-    WalletMock.prototype.getBalance = jest.fn().mockImplementation(async () => {
+    WalletMock.fromMnemonic = jest.fn().mockImplementation(() => WalletMock)
+    WalletMock.prototype.getBalance = jest.fn().mockImplementation(() => {
       return Promise.resolve(BigNumber.from('10'))
     })
   })
   it('is defined', () => {
-    expect(new Wallet()).toBeInstanceOf(Wallet)
+    expect(new WalletRepo()).toBeInstanceOf(WalletRepo)
   })
 
-  it('adds one', async () => {
+  it('adds one', () => {
     expect.assertions(1)
-    const wallet = new Wallet()
-    const address = await wallet.create(mnemonic)
-    expect(address).toEqual({ address: addressMock })
+    const repo = new WalletRepo()
+    const wallet = repo.create(mnemonic)
+    expect(wallet).toBeInstanceOf(WalletMock)
   })
 
-  it('finds one', async () => {
+  it('finds one', () => {
     expect.assertions(1)
-    const walletRepo = new Wallet()
-    const { address } = await walletRepo.create(mnemonic)
-    const wallet = await walletRepo.find(address)
-    expect(wallet).toEqual({ [addressMock]: balanceMock.toString() })
+    const walletRepo = new WalletRepo()
+    const wallet = walletRepo.create(mnemonic)
+    expect(walletRepo.find(wallet.address)).toBeInstanceOf(WalletMock)
   })
 
-  it('finds all', async () => {
-    expect.assertions(1)
-    const walletRepo = new Wallet()
-    await walletRepo.create(mnemonic)
-    const wallets = await walletRepo.findAll()
-    expect(wallets).toEqual([{ [addressMock]: balanceMock.toString() }])
+  it('finds all', () => {
+    const walletRepo = new WalletRepo()
+    walletRepo.create(mnemonic)
+    const wallets = walletRepo.findAll()
+    expect(wallets).toHaveLength(1)
+    expect(wallets[0]).toBeInstanceOf(WalletMock)
   })
 })

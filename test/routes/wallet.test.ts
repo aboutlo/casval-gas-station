@@ -61,6 +61,10 @@ describe('App', () => {
   let ids: string[] = []
   beforeAll(async () => {
     app = await build()
+    const wallets = await Wallet.findAll(app)
+    return Promise.all(
+      wallets.json().map((wallet: any) => Wallet.delete(app, Object.keys(wallet)[0]))
+    )
   })
   afterAll(() => {
     app.close()
@@ -83,58 +87,10 @@ describe('App', () => {
 
     it('returns a list of wallets', async () => {
       const response = await Wallet.create(app, { mnemonic: MNEMONIC })
-      ids.push(response.json().address)
+      const { address } = response.json()
+      ids.push(address)
       const wallets = await Wallet.findAll(app)
-      expect(wallets.json()).toEqual([{ [response.json().address]: '0' }])
+      expect(wallets.json()).toEqual([{ [address]: '0' }])
     })
   })
 })
-
-/*
-test('create student [POST `/v1/student`]', async () => {
-  const res = await fastify.inject({
-    method: 'POST',
-    url: '/v1/student',
-    payload: {
-      firstName: 'Danish',
-      lastName: 'Siddiq',
-      registrationNumber: 313,
-    },
-  })
-
-  expect(res.statusCode).toEqual(HttpStatus.CREATED)
-  expect(JSON.parse(res.payload)).toEqual(
-    expect.objectContaining({
-      _id: expect.any(String),
-      firstName: expect.any(String),
-      lastName: expect.any(String),
-    })
-  )
-})
-
-test('find student [GET `/v1/student/:id`]', async () => {
-  const res = await fastify.inject({
-    method: 'GET',
-    url: '/v1/student/5e456a4628309eb0e1c53d9a',
-  })
-
-  expect(res.statusCode).toEqual(HttpStatus.OK)
-  expect(JSON.parse(res.payload)).toEqual(
-    expect.objectContaining({
-      _id: '5e456a4628309eb0e1c53d9a',
-      firstName: 'Danish',
-    })
-  )
-})
-
-test('update student [PUT `/v1/student/:id`]', async () => {
-  const res = await fastify.inject({
-    method: 'PUT',
-    url:
-      '/v1/student/5e456a4628309eb0e1c53d9a?firstName=Danish 1&lastName=Siddiq 1',
-  })
-
-  expect(res.statusCode).toEqual(HttpStatus.OK)
-  expect(JSON.parse(res.payload)).toEqual({ status: 'ok' })
-})
-*/

@@ -6,7 +6,7 @@ interface Repo<T> {
   // create: (payload: Partial<T>) => T
 }
 
-export class Wallet implements Repo<any> {
+export class WalletRepo implements Repo<any> {
   private storage: Map<string, EtherWallet>
 
   constructor() {
@@ -20,23 +20,16 @@ export class Wallet implements Repo<any> {
       infura: CONFIG.infura.apiKey,
       alchemy: CONFIG.alchemy.apiKey,
     })
-    // wallet.connect(
-    //   getDefaultProvider(CONFIG.network, {
-    //     etherscan: CONFIG.etherscan[CONFIG.network].apiKey,
-    //     infura: CONFIG.infura.apiKey,
-    //     alchemy: CONFIG.alchemy.apiKey,
-    //   })
-    // )
     this.storage.set(
       wallet.address,
       new EtherWallet(wallet.privateKey, provider)
     )
-    return { address: wallet.address }
+    return this.find(wallet.address)
   }
 
   // async find(address: string) {
   //   const wallet = this.storage.get(address)
-  //   if (!wallet) throw new Error(`Wallet ${address} not founds`)
+  //   if (!wallet) throw new Error(`WalletRepo ${address} not founds`)
   //   return wallet.getBalance().then((balance) => {
   //     return { [address]: balance.toString() }
   //   })
@@ -52,9 +45,13 @@ export class Wallet implements Repo<any> {
     return Array.from(this.storage.entries()).map(([key, wallet]) => wallet)
   }
 
-  async delete(address: string) {
+  delete(address: string) {
     const wallet = this.storage.get(address)
     if (!wallet) throw new Error(`Wallet ${address} not founds`)
     return this.storage.delete(address)
+  }
+
+  clear() {
+    return this.storage.clear()
   }
 }
