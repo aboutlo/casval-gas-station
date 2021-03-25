@@ -8,14 +8,25 @@ type SendGasOptions = {
   logger: FastifyLoggerInstance
 }
 export async function sendGas({ wallet, to, value, logger }: SendGasOptions) {
-  const transactionResponse = await wallet.sendTransaction({
-    to,
-    value,
-  })
-  logger.info({ hash: transactionResponse.hash }, 'submitted')
+  const localLogger = logger.child({ module: 'sendGas' })
+  let transactionResponse
+  try {
+    transactionResponse = await wallet.sendTransaction({
+      to,
+      value,
+    })
+    localLogger.info({ hash: transactionResponse.hash }, 'submitted')
+  } catch (e) {
+    localLogger.error(`sendTransaction failed ${e.message}`)
+    return
+  }
 
-  const receipt = await transactionResponse.wait()
-  logger.info({ receipt: receipt.transactionHash }, 'mined')
+  try {
+    const receipt = await transactionResponse.wait()
+    localLogger.info({ receipt: receipt.transactionHash }, 'mined')
+  } catch (e) {
+    localLogger.error(`wait failed ${e.message}`)
+  }
 }
 
 export default sendGas

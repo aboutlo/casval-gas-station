@@ -32,12 +32,20 @@ export const processOrder = async (
   }
 }
 
-export function processEvent(data: string, secret: string) {
-  if (data) {
-    try {
-      return jwt.verify(data, secret) as TransakOrder
-    } catch (e) {
-      console.error(e)
-    }
+export function processEvent(
+  data: string,
+  secret: string,
+  logger: FastifyLoggerInstance
+) {
+  try {
+    const order = jwt.verify(data, secret) as TransakOrder
+    logger.info(
+      { status: order.status, id: order.id, wallet: order.walletAddress },
+      'processed'
+    )
+    return order
+  } catch (e) {
+    logger.warn({ message: e.message }, 'processEvent failed')
+    return
   }
 }

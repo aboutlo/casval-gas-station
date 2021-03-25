@@ -12,22 +12,31 @@ const Transak: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
     cluster: 'ap2',
   })
   pusher.connection.bind('error', function (err: any) {
-    logger.info(err)
+    logger.error(err, 'pusher failed')
   })
+  pusher.connection.bind('state_change', (states: any) => {
+    logger.info({ states }, 'pusher state_change')
+  })
+
   const channel = pusher.subscribe(configs.apiKey)
   logger.info({ channel: channel.name })
+  channel.bind(TransakEventStatus.Created, (data: any) => {
+    processEvent(data, configs.secret, logger)
+  })
+  channel.bind(TransakEventStatus.Processing, (data: any) => {
+    processEvent(data, configs.secret, logger)
+  })
+  channel.bind(TransakEventStatus.PaymentVerifying, (data: any) => {
+    processEvent(data, configs.secret, logger)
+  })
+  channel.bind(TransakEventStatus.Failed, (data: any) => {
+    processEvent(data, configs.secret, logger)
+  })
   channel.bind(TransakEventStatus.Completed, (data: any) => {
     logger.info({ event: TransakEventStatus.Completed })
-    // TODO LS ignore aka don't log pusher events
-    const order = processEvent(data, configs.secret)
+    const order = processEvent(data, configs.secret, logger)
     return processOrder(order, fastify.repos.walletRepo, logger)
   })
-  // channel.bind_global((message: string, encryptedOrderData: any) => {
-  //   logger.info({ message })
-  //   // TODO LS ignore aka don't log pusher events
-  //   const order = processEvent(encryptedOrderData, configs.secret)
-  //   return processOrder(order, fastify.repos.walletRepo, logger)
-  // })
 }
 
 export default Transak
