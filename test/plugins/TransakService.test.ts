@@ -9,15 +9,19 @@ import { WalletRepoUtils } from '../models/utils'
 
 import { TransakOrderStatus } from '../../src/services/types'
 import { sendGas } from '../../src/utils'
+import { transferToken } from '../../src/utils/transferToken'
 import { MINIMUM_INVEST_GAS } from '../../src/services/utils'
 import { PusherMockImplementation } from '../PusherMock'
 
 jest.mock('pusher-js')
 jest.mock('../../src/utils')
+jest.mock('../../src/utils/transferToken')
 jest.mock('jsonwebtoken')
 
 const sendGasMock = sendGas as jest.MockedFunction<typeof sendGas>
-// const PusherMock = Pusher as jest.Mocked<typeof Pusher>
+const transferTokenMock = transferToken as jest.MockedFunction<
+  typeof transferToken
+>
 const PusherMock = (Pusher as unknown) as jest.Mock
 const JWTMock = (JWT as unknown) as jest.Mocked<typeof JWT>
 
@@ -42,16 +46,19 @@ describe('TransakService', () => {
   let walletAddress: string
   let pusher: PusherMockImplementation
 
+  const orderMock = {
+    id: 123,
+    status: TransakOrderStatus.Completed,
+    cryptoAmount: 50.01,
+    walletAddress: '0x27357319d22757483e1f64330068796E21C9b6ab',
+  }
+
   beforeAll(async () => {
     pusher = new PusherMockImplementation('apiKey', {
       cluster: 'ap2',
     })
     PusherMock.mockImplementation(() => pusher)
-    JWTMock.verify.mockImplementation(() => ({
-      id: 123,
-      status: TransakOrderStatus.Completed,
-      walletAddress: '0x27357319d22757483e1f64330068796E21C9b6ab',
-    }))
+    JWTMock.verify.mockImplementation(() => orderMock)
 
     app = await build()
     const response = await WalletRepoUtils.create(app, {
@@ -76,6 +83,13 @@ describe('TransakService', () => {
       expect(sendGasMock).toHaveBeenCalledWith({
         to: '0x27357319d22757483e1f64330068796E21C9b6ab',
         value: MINIMUM_INVEST_GAS,
+        wallet: expect.anything(),
+        logger: expect.anything(),
+      })
+      expect(transferTokenMock).toHaveBeenCalledWith({
+        to: '0x27357319d22757483e1f64330068796E21C9b6ab',
+        amount: orderMock.cryptoAmount.toFixed(2),
+        asset: app.config.KOVAN_TEST_ASSET,
         wallet: expect.anything(),
         logger: expect.anything(),
       })

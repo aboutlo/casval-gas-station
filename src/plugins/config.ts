@@ -18,6 +18,10 @@ export default fp<SupportPluginOptions>(
           S.string().default('kovan').enum(['kovan', 'mainnet']).required()
         )
         .prop(
+          'KOVAN_TEST_ASSET',
+          S.string().default('0xff795577d9ac8bd7d90ee22b6c1703490b6512fd')
+        )
+        .prop(
           'ALCHEMY_APY_KEY',
           S.string().default('lbJ3HMDaSHXyDaZ6r_1h1HUQpA84OQVp')
         )
@@ -55,9 +59,10 @@ export default fp<SupportPluginOptions>(
 declare module 'fastify' {
   export interface FastifyInstance {
     config: {
-      NETWORK: string
+      NETWORK: 'kovan' | 'mainnet'
       PORT: string
       DEFAULT_WALLET_MNEMONIC: string | undefined
+      KOVAN_TEST_ASSET: string
       ALCHEMY_APY_KEY: string
       INFURA_APY_KEY: string
       ETHERSCAN_APY_KEY: string

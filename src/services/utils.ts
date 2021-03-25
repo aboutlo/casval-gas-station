@@ -1,34 +1,47 @@
 import { TransakOrder, TransakOrderStatus } from './types'
 import { Wallet } from 'ethers'
 import { BigNumber } from '@ethersproject/bignumber'
-import { WalletRepo } from '../models/WalletRepo'
 import { FastifyLoggerInstance } from 'fastify'
 import jwt from 'jsonwebtoken'
 import { sendGas } from '../utils'
+import transferToken from '../utils/transferToken'
 
 export const MINIMUM_INVEST_GAS = '0x7627' // Check how much it cost invest + withdraw
-export const processOrderComplete = async (
-  order: TransakOrder | undefined,
-  repo: WalletRepo,
+type ProcessOrder = {
+  order: TransakOrder
+  wallet: Wallet
+  network: 'kovan' | 'mainnet'
   logger: FastifyLoggerInstance
-) => {
-  if (!order || order.status !== TransakOrderStatus.Completed) {
-    logger.info({ orderId: order?.id, status: order?.status }, 'skipping...')
-    return
-  }
-
+  asset: string
+}
+export const processOrderComplete = async ({
+  order,
+  wallet,
+  network,
+  logger,
+  asset,
+}: ProcessOrder) => {
   const { walletAddress: to } = order
-  const [wallet] = repo.findAll() as Wallet[]
-  logger.info({ from: wallet.address }, 'preparing...')
-
+  logger.info({ to }, 'checking...')
   const balance: BigNumber = await wallet.provider.getBalance(to)
-  logger.info({ to, balance }, 'checking...')
 
   if (balance.lt(MINIMUM_INVEST_GAS)) {
-    logger.info('Sending GAS...')
+    logger.info({ to, balance }, 'Sending GAS...')
     await sendGas({ wallet, to, value: MINIMUM_INVEST_GAS, logger })
+    // TODO LS sendTokens only if kovan
   } else {
-    logger.info({ to, balance }, 'Enough GAS')
+    logger.info({ to, balance }, 'Skip GAS')
+  }
+
+  if (network === 'kovan') {
+    logger.info({ to, balance, network, asset }, 'Sending funds...')
+    await transferToken({
+      wallet,
+      to,
+      asset,
+      logger,
+      amount: order.cryptoAmount.toFixed(2),
+    })
   }
 }
 
