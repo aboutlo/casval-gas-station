@@ -7,13 +7,13 @@ import jwt from 'jsonwebtoken'
 import { sendGas } from '../utils'
 
 export const MINIMUM_INVEST_GAS = '0x7627' // Check how much it cost invest + withdraw
-export const processOrder = async (
+export const processOrderComplete = async (
   order: TransakOrder | undefined,
   repo: WalletRepo,
   logger: FastifyLoggerInstance
 ) => {
   if (!order || order.status !== TransakOrderStatus.Completed) {
-    logger.info({ order: order?.id, status: order?.status }, 'skipping...')
+    logger.info({ orderId: order?.id, status: order?.status }, 'skipping...')
     return
   }
 
