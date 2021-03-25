@@ -1,5 +1,4 @@
-import { Wallet as EtherWallet, getDefaultProvider } from 'ethers'
-import { CONFIG } from '../config'
+import { Wallet as EtherWallet, getDefaultProvider, providers } from 'ethers'
 const DEFAULT_DERIVATION_PATH = `m/44'/60'/0'/0/0`
 
 interface Repo<T> {
@@ -8,21 +7,18 @@ interface Repo<T> {
 
 export class WalletRepo implements Repo<any> {
   private storage: Map<string, EtherWallet>
+  private provider: providers.Provider
 
-  constructor() {
+  constructor(provider: providers.Provider) {
     this.storage = new Map()
+    this.provider = provider
   }
 
   create(mnemonic: string, path = DEFAULT_DERIVATION_PATH) {
     const wallet = EtherWallet.fromMnemonic(mnemonic, path)
-    const provider = getDefaultProvider(CONFIG.network, {
-      etherscan: CONFIG.etherscan[CONFIG.network].apiKey,
-      infura: CONFIG.infura.apiKey,
-      alchemy: CONFIG.alchemy.apiKey,
-    })
     this.storage.set(
       wallet.address,
-      new EtherWallet(wallet.privateKey, provider)
+      new EtherWallet(wallet.privateKey, this.provider)
     )
     return this.find(wallet.address)
   }
