@@ -1,7 +1,8 @@
 import Fastify, { FastifyInstance } from 'fastify'
 import fp from 'fastify-plugin'
 import App from '../../src/app'
-import {WalletRepoUtils} from '../models/utils'
+import { WalletRepoUtils } from '../models/utils'
+import { Wallet } from 'ethers'
 
 const MNEMONIC =
   'stay apart adjust retire frame lumber usual amazing smoke worry outside wash'
@@ -31,14 +32,14 @@ describe('Wallets', () => {
 
   beforeAll(async () => {
     app = await build()
-    const wallets = await WalletRepoUtils.findAll(app)
-    return Promise.all(
-      wallets
-        .json()
-        .map((wallet: any) =>
-          WalletRepoUtils.delete(app, Object.keys(wallet)[0])
-        )
-    )
+    // const wallets = await WalletRepoUtils.findAll(app)
+    // return Promise.all(
+    //   wallets
+    //     .json()
+    //     .map((wallet: any) =>
+    //       WalletRepoUtils.delete(app, Object.keys(wallet)[0])
+    //     )
+    // )
   })
 
   afterAll(() => {
@@ -59,17 +60,20 @@ describe('Wallets', () => {
       const response = await WalletRepoUtils.create(app, {
         mnemonic: MNEMONIC,
       })
-      const json = response.json()
-      ids.push(json.address)
-      expect({ address: json.address }).toEqual({ address: DEFAULT_ADDRESS })
+      const wallet = response.json<any>()
+      const [address] = Object.keys(wallet)
+      ids.push(address)
+      expect(wallet).toEqual({ [address]: { eth: '0.0' } })
     })
 
     it('returns a list of wallets', async () => {
       const response = await WalletRepoUtils.create(app, { mnemonic: MNEMONIC })
-      const { address } = response.json()
+      const wallet = response.json<any>()
+      const [address] = Object.keys(wallet)
       ids.push(address)
-      const wallets = await WalletRepoUtils.findAll(app)
-      expect(wallets.json()).toEqual([{ [address]: '0' }])
+      const responses = await WalletRepoUtils.findAll(app)
+      const wallets = responses.json<any>()
+      expect(wallets).toEqual([{ [address]: { eth: '0.0' } }])
     })
   })
 })

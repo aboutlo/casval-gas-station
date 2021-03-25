@@ -7,8 +7,8 @@
     "test": "test"
   },
   "scripts": {
-    "test": "jest",
-    "test:watch": "jest --watchAll --detectOpenHandles",
+    "test": "DEFAULT_WALLET_MNEMONIC= jest",
+    "test:watch": "DEFAULT_WALLET_MNEMONIC= jest --watchAll --detectOpenHandles",
     "start": "FASTIFY_ADDRESS=0.0.0.0 fastify start -l info dist/app.js",
     "build": "tsc",
     "dev": "tsc && concurrently -k -p \"[{name}]\" -n \"TypeScript,App\" -c \"yellow.bold,cyan.bold\"  \"tsc -w\" \"FASTIFY_ADDRESS=0.0.0.0 fastify start -w -l info -P dist/app.js\""
@@ -17,13 +17,14 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "env-schema": "^3.0.1",
     "ethers": "^5.0.32",
     "fastify": "^3.0.0",
     "fastify-autoload": "^3.3.1",
     "fastify-cli": "^2.9.1",
-    "fastify-env": "^2.1.0",
     "fastify-plugin": "^3.0.0",
     "fastify-sensible": "^3.1.0",
+    "fluent-json-schema": "^2.0.4",
     "jsonwebtoken": "^8.5.1",
     "pusher-js": "^7.0.3"
   },

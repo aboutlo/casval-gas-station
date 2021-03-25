@@ -1,5 +1,6 @@
 import { FastifyPluginAsync, RequestGenericInterface } from 'fastify'
 import { Wallet } from 'ethers'
+import { formatEther } from 'ethers/lib/utils'
 
 // import { WalletRepo } from '../../models/WalletRepo'
 
@@ -24,22 +25,21 @@ interface PostRequest extends RequestGenericInterface {
 
 const toBalance = (wallet: Wallet) =>
   wallet.getBalance().then((balance) => ({
-    [wallet.address]: balance.toString(),
+    [wallet.address]: { eth: formatEther(balance) },
   }))
 
 const wallets: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
   fastify.post<PostRequest>('', async function (request, reply) {
     const { mnemonic, path } = request.body
-    return fastify.repos.walletRepo.create(mnemonic, path)
+    const wallet = fastify.repos.walletRepo.create(mnemonic, path)
+    return toBalance(wallet)
   })
   fastify.delete<DeleteRequest>('/:id', async function (request, reply) {
     const { id } = request.params
     return fastify.repos.walletRepo.delete(id)
   })
   fastify.get<FindRequest>('/:id', async function (request, reply) {
-    console.log('params:', request.params)
     const wallet = fastify.repos.walletRepo.find(request.params.id) as Wallet
-    console.log('find:', wallet.address)
     return toBalance(wallet)
   })
   fastify.get('', async function (request, reply) {

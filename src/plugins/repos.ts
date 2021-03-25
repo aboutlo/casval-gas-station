@@ -10,6 +10,7 @@ export interface SupportPluginOptions {
 export default fp<SupportPluginOptions>(async (fastify, opts) => {
   const walletRepo = new WalletRepo()
   if (fastify.config.DEFAULT_WALLET_MNEMONIC) {
+    fastify.log.info('Setting default wallet...')
     walletRepo.create(fastify.config.DEFAULT_WALLET_MNEMONIC)
   }
   fastify.decorate('repos', {

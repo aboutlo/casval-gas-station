@@ -10,19 +10,26 @@ import { CONFIG } from '../../src/config'
 import { TransakOrderStatus } from '../../src/services/types'
 import { sendGas } from '../../src/utils'
 import { MINIMUM_INVEST_GAS } from '../../src/services/utils'
+import { PusherMockImplementation } from '../PusherMock'
 
-jest.mock('pusher-js', () => {
-  const Pusher = require('pusher-js-mock').PusherMock
-  return Pusher
-})
+// jest.mock('pusher-js', () => {
+//   const Pusher = require('pusher-js-mock').PusherMock
+//   return Pusher
+// })
+
+// jest.mock('pusher-js', ()  => {
+//   return PusherMock
+// })
+jest.mock('pusher-js')
+
 jest.mock('../../src/utils')
 
 const sendGasMock = sendGas as jest.MockedFunction<typeof sendGas>
+// const PusherMock = Pusher as jest.Mocked<typeof Pusher>
+const PusherMock = (Pusher as unknown) as jest.Mock
 
-const MNEMONIC =
+const MNEMONIC_MOCK =
   'stay apart adjust retire frame lumber usual amazing smoke worry outside wash'
-
-const DEFAULT_ADDRESS = '0x27357319d22757483e1f64330068796E21C9b6ab'
 
 async function build() {
   const app = Fastify()
@@ -39,31 +46,37 @@ async function build() {
 
 describe('TransakService', () => {
   let app: FastifyInstance
+  let walletAddress: string
+  let pusher = beforeAll(async () => {
+    const configs = CONFIG.transak[CONFIG.network]
+    pusher = new PusherMockImplementation(configs.pusherApiKey, {
+      cluster: 'ap2',
+    })
+    PusherMock.mockImplementation(() => pusher)
 
-  beforeAll(async () => {
     app = await build()
-    const wallets = await WalletRepoUtils.findAll(app)
-    await Promise.all(
-      wallets
-        .json()
-        .map((wallet: any) =>
-          WalletRepoUtils.delete(app, Object.keys(wallet)[0])
-        )
-    )
-    await WalletRepoUtils.create(app, { mnemonic: MNEMONIC })
+    const response = await WalletRepoUtils.create(app, {
+      mnemonic: MNEMONIC_MOCK,
+    })
+    const wallet = response.json()
+    const [walletId] = Object.keys(wallet)
+    walletAddress = walletId
   })
 
-  afterAll(() => {
-    app.close()
+  afterAll(async () => {
+    await app.close()
+    await WalletRepoUtils.delete(app, walletAddress)
   })
 
   it('receives an order', async () => {
     const configs = CONFIG.transak[CONFIG.network]
-    const pusher = new Pusher(configs.pusherApiKey, {
-      cluster: 'ap2',
-    })
 
-    const channel = pusher.subscribe(configs.apiKey)
+    // pusherMock.global_emitter = jest.fn().mockImplementation(() => any)
+    // const pusher = new Pusher(configs.pusherApiKey, {
+    //   cluster: 'ap2',
+    // })
+
+    // const channel = pusher.subscribe(configs.apiKey)
     // channel.bind(TransakEventStatus.Completed, listener)
     const order = jwt.sign(
       {
@@ -74,7 +87,7 @@ describe('TransakService', () => {
       configs.secret
     )
 
-    channel.emit(TransakEventStatus.Completed, order)
+    pusher.global_emitter.emit(TransakEventStatus.Completed, order)
 
     await waitFor(() => {
       expect(sendGasMock).toHaveBeenCalledWith({

@@ -1078,7 +1078,7 @@ aes-js@3.0.0:
   resolved "https://registry.yarnpkg.com/aes-js/-/aes-js-3.0.0.tgz#e21df10ad6c2053295bcbb8dab40b09dbea87e4d"
   integrity sha1-4h3xCtbCBTKVvLuNq0Cwnb6ofk0=
 
-ajv@^6.10.2, ajv@^6.11.0, ajv@^6.12.2, ajv@^6.12.3:
+ajv@^6.11.0, ajv@^6.12.2, ajv@^6.12.3:
   version "6.12.6"
   resolved "https://registry.yarnpkg.com/ajv/-/ajv-6.12.6.tgz#baf5a62e802b07d977034586f8c3baf5adf26df4"
   integrity sha512-j3fVLgvTo527anyYyJOGTYJbG+vnnQYvE0m5mmkc1TK+nxAppkCLMIL0aZ4dblVCNoGShhm+kzE4ZUykBoMg4g==
@@ -1086,6 +1086,16 @@ ajv@^6.10.2, ajv@^6.11.0, ajv@^6.12.2, ajv@^6.12.3:
     fast-deep-equal "^3.1.1"
     fast-json-stable-stringify "^2.0.0"
     json-schema-traverse "^0.4.1"
+    uri-js "^4.2.2"
+
+ajv@^7.1.1:
+  version "7.2.3"
+  resolved "https://registry.yarnpkg.com/ajv/-/ajv-7.2.3.tgz#ca78d1cf458d7d36d1c3fa0794dd143406db5772"
+  integrity sha512-idv5WZvKVXDqKralOImQgPM9v6WOdLNa0IY3B3doOjw/YxRGT8I+allIJ6kd7Uaj+SF1xZUSU+nPM5aDNBVtnw==
+  dependencies:
+    fast-deep-equal "^3.1.1"
+    json-schema-traverse "^1.0.0"
+    require-from-string "^2.0.2"
     uri-js "^4.2.2"
 
 ansi-escapes@^3.2.0:
@@ -2150,12 +2160,12 @@ end-of-stream@^1.1.0:
   dependencies:
     once "^1.4.0"
 
-env-schema@^2.0.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/env-schema/-/env-schema-2.1.0.tgz#01aa8788fa6aa5afb12fcf77e665f2f10f9a0cfa"
-  integrity sha512-qvbmiB+31WJlDs4i9/R8jxEYfq3A0K20QzjGLR4cnlX3SD55ljVEULHXHU1iaPdWOkTSho/TajNzZp3jX3Shsw==
+env-schema@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/env-schema/-/env-schema-3.0.1.tgz#6bd70510931ef75f8c534b25f343949d28cbdd65"
+  integrity sha512-NvlNGY4VdtqiC+bFVLuA7EKDTekDwxRFq+0+gTw7gSdWDUvjZZ3Jq2aZibBz4iHFu2XOm13SGicyPzYFlbsdTg==
   dependencies:
-    ajv "^6.10.2"
+    ajv "^7.1.1"
     dotenv "^8.2.0"
     dotenv-expand "^5.1.0"
 
@@ -2451,25 +2461,10 @@ fastify-cli@^2.9.1:
     split2 "^3.1.1"
     yargs-parser "^20.0.0"
 
-fastify-env@^2.1.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/fastify-env/-/fastify-env-2.1.0.tgz#41732e81b69ec95baa9734f8c81bcc59118d828a"
-  integrity sha512-yKQ9s+w7ve5FIPmZg1ll6jUHFFes7lOV1jQpD/VzYfWs+Iavm+pqe7nUuOJN9NRRp5VPJ0BCoPa0qVl+w/+3+A==
-  dependencies:
-    env-schema "^2.0.0"
-    fastify-plugin "^2.0.0"
-
 fastify-error@^0.3.0:
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/fastify-error/-/fastify-error-0.3.0.tgz#08866323d521156375a8be7c7fcaf98df946fafb"
   integrity sha512-Jm2LMTB5rsJqlS1+cmgqqM9tTs0UrlgYR7TvDT3ZgXsUI5ib1NjQlqZHf+tDK5tVPdFGwyq02wAoJtyYIRSiFA==
-
-fastify-plugin@^2.0.0:
-  version "2.3.4"
-  resolved "https://registry.yarnpkg.com/fastify-plugin/-/fastify-plugin-2.3.4.tgz#b17abdc36a97877d88101fb86ad8a07f2c07de87"
-  integrity sha512-I+Oaj6p9oiRozbam30sh39BiuiqBda7yK2nmSPVwDCfIBlKnT8YB3MY+pRQc2Fcd07bf6KPGklHJaQ2Qu81TYQ==
-  dependencies:
-    semver "^7.3.2"
 
 fastify-plugin@^3.0.0:
   version "3.0.0"
@@ -2608,6 +2603,13 @@ flow-remove-types@^2.112.0:
     flow-parser "^0.147.0"
     pirates "^3.0.2"
     vlq "^0.2.1"
+
+fluent-json-schema@^2.0.4:
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/fluent-json-schema/-/fluent-json-schema-2.0.4.tgz#85481631fdfb10b5e0a35e37c2662e5de100ee1b"
+  integrity sha512-SJKgDCCsCSfd7itgcCJ/94Zau03fVowqo7un7iqQVilAXMyz4C+6WGN3+2anIEtgFylzWyRvLw3pS+JmyoClOw==
+  dependencies:
+    deepmerge "^4.2.2"
 
 for-in@^1.0.2:
   version "1.0.2"
@@ -3766,6 +3768,11 @@ json-schema-traverse@^0.4.1:
   version "0.4.1"
   resolved "https://registry.yarnpkg.com/json-schema-traverse/-/json-schema-traverse-0.4.1.tgz#69f6a87d9513ab8bb8fe63bdb0979c448e684660"
   integrity sha512-xbbCH5dCYU5T8LcEhhuh7HJ88HXuW3qsI3Y0zOZFKfZEHcpWiHU/Jxzk629Brsab/mMiHQti9wMP+845RPe3Vg==
+
+json-schema-traverse@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/json-schema-traverse/-/json-schema-traverse-1.0.0.tgz#ae7bcb3656ab77a73ba5c49bf654f38e6b6860e2"
+  integrity sha512-NM8/P9n3XjXhIZn1lLhkFaACTOURQXjWhV4BA/RnOv8xvgqtqpAX9IO4mRQxSx1Rlo4tqzeqb0sOlruaOy3dug==
 
 json-schema@0.2.3:
   version "0.2.3"
@@ -4989,6 +4996,11 @@ require-directory@^2.1.1:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/require-directory/-/require-directory-2.1.1.tgz#8c64ad5fd30dab1c976e2344ffe7f792a6a6df42"
   integrity sha1-jGStX9MNqxyXbiNE/+f3kqam30I=
+
+require-from-string@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/require-from-string/-/require-from-string-2.0.2.tgz#89a7fdd938261267318eafe14f9c32e598c36909"
+  integrity sha512-Xf0nWe6RseziFMu+Ap9biiUbmplq6S9/p+7w7YXP/JBHhrUDDUhwa+vANyubuqfZWTveU//DYVGsDG7RKL/vEw==
 
 require-main-filename@^2.0.0:
   version "2.0.0"

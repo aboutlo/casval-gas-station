@@ -49,7 +49,6 @@ const Transak: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
 
   // action can be an orderId or `pusher:pong` as string
   // data is a string encoded
-  // FIXME LS tests bind_global isn't mocked
   pusher.bind_global((action: string, data: string) => {
     logger.info({ action }, 'bind_global received')
     const order = processEvent(data, configs.secret, logger)
