@@ -19,7 +19,7 @@ const Transak: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
   })
 
   const channel = pusher.subscribe(configs.apiKey)
-  logger.info({ channel: channel.name })
+  logger.info({ channel: channel.name }, 'subscribe')
   channel.bind(TransakEventStatus.Created, (data: any) => {
     processEvent(data, configs.secret, logger)
   })
@@ -33,9 +33,17 @@ const Transak: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
     processEvent(data, configs.secret, logger)
   })
   channel.bind(TransakEventStatus.Completed, (data: any) => {
-    logger.info({ event: TransakEventStatus.Completed })
     const order = processEvent(data, configs.secret, logger)
     return processOrder(order, fastify.repos.walletRepo, logger)
+  })
+
+  // action can be an orderId or `pusher:pong` as string
+  // data is a string encoded
+  // FIXME LS tests bind_global isn't mocked
+  pusher.bind_global((action: string, data: string) => {
+    logger.info({ action }, 'bind_global received')
+    const order = processEvent(data, configs.secret, logger)
+    processOrder(order, fastify.repos.walletRepo, logger)
   })
 }
 
