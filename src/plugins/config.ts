@@ -17,6 +17,7 @@ export default fp<SupportPluginOptions>(
           'NETWORK',
           S.string().default('kovan').enum(['kovan', 'mainnet']).required()
         )
+        .prop('TRANSAK_SERVICE', S.boolean().default('true').required())
         .prop(
           'KOVAN_TEST_ASSET',
           S.string().default('0xff795577d9ac8bd7d90ee22b6c1703490b6512fd')
@@ -69,6 +70,7 @@ declare module 'fastify' {
       TRANSAK_PUSHER_APY_KEY: string
       TRANSAK_SECRET: string
       TRANSAK_API_KEY: string
+      TRANSAK_SERVICE: boolean
     }
   }
 }

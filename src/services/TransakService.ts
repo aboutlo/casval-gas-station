@@ -6,14 +6,17 @@ import { Wallet } from 'ethers'
 
 const Transak: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
   const logger = fastify.log.child({ module: 'TransakService' })
-  logger.info('starting...')
+
   const {
     TRANSAK_PUSHER_APY_KEY,
     TRANSAK_API_KEY,
     TRANSAK_SECRET,
     KOVAN_TEST_ASSET,
     NETWORK,
+    TRANSAK_SERVICE
   } = fastify.config
+  if(!TRANSAK_SERVICE) return
+  logger.info('starting...')
   const pusher = new Pusher(TRANSAK_PUSHER_APY_KEY, {
     cluster: 'ap2',
   })
