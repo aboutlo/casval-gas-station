@@ -1,12 +1,21 @@
-import { TransakOrder, TransakOrderStatus } from './types'
+import { TransakOrder } from './types'
 import { Wallet } from 'ethers'
 import { BigNumber } from '@ethersproject/bignumber'
 import { FastifyLoggerInstance } from 'fastify'
 import jwt from 'jsonwebtoken'
 import { sendGas } from '../utils'
 import transferToken from '../utils/transferToken'
+import { formatEther, parseUnits } from 'ethers/lib/utils'
 
-export const MINIMUM_INVEST_GAS = '0x7627' // Check how much it cost invest + withdraw
+export const AAVE_WITHDRAW_GAS_LIMIT = 206736 // e.g. https://kovan.etherscan.io/tx/0x03e8c849cf63483463a8a0a926f91358a437fe88c1660901584b364c3f7929d5
+export const AAVE_DEPOSIT_GAS_LIMIT = 178882 // Check how much it cost invest + withdraw
+export const GAS_MAX_PRICE = 200 // GWei in kovan currently the average is 14/20 GWei. TODO LS Should we pick from current gas price to optimize the deposit?
+
+export const GAS_REQUIRED = parseUnits(
+  GAS_MAX_PRICE.toString(),
+  'gwei'
+).mul(AAVE_DEPOSIT_GAS_LIMIT + AAVE_WITHDRAW_GAS_LIMIT)
+
 type ProcessOrder = {
   order: TransakOrder
   wallet: Wallet
@@ -14,6 +23,21 @@ type ProcessOrder = {
   logger: FastifyLoggerInstance
   asset: string
 }
+
+// const processor = (logger, network, wallet) => {
+//
+//   return {
+//     process: (order) => {
+//
+//     },
+//
+//     valueOf: () => {
+//
+//     }
+//   }
+// }
+//
+
 export const processOrderComplete = async ({
   order,
   wallet,
@@ -23,18 +47,37 @@ export const processOrderComplete = async ({
 }: ProcessOrder) => {
   const { walletAddress: to } = order
   logger.info({ to }, 'checking...')
-  const balance: BigNumber = await wallet.provider.getBalance(to)
+  // TODO LS send only DEPOSIT
+  // Implement ask for GAS on demand POST /gas
+  // {
+  //   required: '0x001'
+  //   action: 'withdraw'
+  //   pot: '0x001'
+  // }
+  // check if this address received ether then send more gas
 
-  if (balance.lt(MINIMUM_INVEST_GAS)) {
-    logger.info({ to, balance }, 'Sending GAS...')
-    await sendGas({ wallet, to, value: MINIMUM_INVEST_GAS, logger })
-    // TODO LS sendTokens only if kovan
+  const balance: BigNumber = await wallet.provider.getBalance(to)
+  // const gasPrice = parseUnits(GAS_MAX_PRICE.toString(), 'gwei')
+  // const requiredGas = gasPrice.mul(
+  //   AAVE_DEPOSIT_GAS_LIMIT + AAVE_WITHDRAW_GAS_LIMIT
+  // )
+
+  if (balance.lt(GAS_REQUIRED)) {
+    logger.info(
+      {
+        to,
+        balance: formatEther(balance),
+        value: formatEther(GAS_REQUIRED),
+      },
+      'Sending GAS...'
+    )
+    await sendGas({ wallet, to, value: GAS_REQUIRED, logger })
   } else {
-    logger.info({ to, balance }, 'Skip GAS')
+    logger.info({ to, balance }, 'GAS not required')
   }
 
   if (network === 'kovan') {
-    logger.info({ to, balance, network, asset }, 'Sending funds...')
+    logger.info({ to, balance, network, asset }, 'sending funds')
     await transferToken({
       wallet,
       to,
@@ -43,6 +86,7 @@ export const processOrderComplete = async ({
       amount: order.cryptoAmount.toFixed(2),
     })
   }
+  return Promise.resolve(true)
 }
 
 export function processEvent(

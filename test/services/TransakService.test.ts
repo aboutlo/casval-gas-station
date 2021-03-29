@@ -10,7 +10,7 @@ import { WalletRepoUtils } from '../models/utils'
 import { TransakOrderStatus } from '../../src/services/types'
 import { sendGas } from '../../src/utils'
 import { transferToken } from '../../src/utils/transferToken'
-import { MINIMUM_INVEST_GAS } from '../../src/services/utils'
+import { GAS_REQUIRED } from '../../src/services/utils'
 import { PusherMockImplementation } from '../PusherMock'
 
 jest.mock('pusher-js')
@@ -82,7 +82,7 @@ describe('TransakService', () => {
     await waitFor(() => {
       expect(sendGasMock).toHaveBeenCalledWith({
         to: '0x27357319d22757483e1f64330068796E21C9b6ab',
-        value: MINIMUM_INVEST_GAS,
+        value: GAS_REQUIRED,
         wallet: expect.anything(),
         logger: expect.anything(),
       })
