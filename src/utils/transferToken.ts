@@ -20,15 +20,14 @@ export async function transferToken({
 }: TransferTokenOptions) {
   const localLogger = logger.child({ module: 'transferToken' })
   const contract = new Contract(asset, ERC20ABI, wallet)
-
   let transactionResponse: TransactionResponse
   try {
-    const funds = parseUnits(amount, 18)
-    localLogger.info(
-      { from: wallet.address, to, funds, asset },
-      'preparing transfer'
-    )
-    transactionResponse = await contract.transfer(to, funds)
+    // const funds = parseUnits(amount, 18)
+    // localLogger.info(
+    //   { from: wallet.address, to, funds, asset },
+    //   'preparing transfer'
+    // )
+    transactionResponse = await contract.transfer(to, amount)
     localLogger.info({ hash: transactionResponse.hash }, 'submitted')
   } catch (e) {
     localLogger.error(`sendTransaction failed: ${e.message}`)
