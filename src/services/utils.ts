@@ -54,13 +54,23 @@ export const processOrderComplete = async ({
   //   pot: '0x001'
   // }
   // check if this address received ether then send more gas
+  if (network === 'kovan') {
+    logger.info({ to, network, asset }, 'sending funds')
+    const amount = parseUnits(cryptoAmount.toString(), 18).toString()
+    logger.info(
+      { from: wallet.address, to, amount, asset },
+      'preparing transfer'
+    )
+    await transferToken({
+      wallet,
+      to,
+      asset,
+      logger,
+      amount,
+    })
+  }
 
   const balance: BigNumber = await wallet.provider.getBalance(to)
-  // const gasPrice = parseUnits(GAS_MAX_PRICE.toString(), 'gwei')
-  // const requiredGas = gasPrice.mul(
-  //   AAVE_DEPOSIT_GAS_LIMIT + AAVE_WITHDRAW_GAS_LIMIT
-  // )
-
   if (balance.lt(GAS_REQUIRED)) {
     logger.info(
       {
@@ -75,21 +85,7 @@ export const processOrderComplete = async ({
     logger.info({ to, balance }, 'GAS not required')
   }
 
-  if (network === 'kovan') {
-    logger.info({ to, balance, network, asset }, 'sending funds')
-    const amount = parseUnits(cryptoAmount.toString(), 18).toString()
-    logger.info(
-      { from: wallet.address, to, amount, asset },
-      'preparing transfer'
-    )
-    await transferToken({
-      wallet,
-      to,
-      asset,
-      logger,
-      amount,
-    })
-  }
+
   return Promise.resolve(true)
 }
 

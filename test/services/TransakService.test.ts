@@ -8,13 +8,14 @@ import App from '../../src/app'
 import { WalletRepoUtils } from '../models/utils'
 
 import { TransakOrderStatus } from '../../src/services/types'
-import { sendGas } from '../../src/utils'
+import { sendGas } from '../../src/utils/sendGas'
 import { transferToken } from '../../src/utils/transferToken'
 import { GAS_REQUIRED } from '../../src/services/utils'
 import { PusherMockImplementation } from '../PusherMock'
+import { formatUnits, parseUnits } from 'ethers/lib/utils'
 
 jest.mock('pusher-js')
-jest.mock('../../src/utils')
+jest.mock('../../src/utils/sendGas')
 jest.mock('../../src/utils/transferToken')
 jest.mock('jsonwebtoken')
 
@@ -80,16 +81,16 @@ describe('TransakService', () => {
     pusher.global_emitter.emit(TransakEventStatus.Completed, order)
 
     await waitFor(() => {
-      expect(sendGasMock).toHaveBeenCalledWith({
+      expect(transferTokenMock).toHaveBeenCalledWith({
         to: '0x27357319d22757483e1f64330068796E21C9b6ab',
-        value: GAS_REQUIRED,
+        amount: parseUnits(orderMock.cryptoAmount.toString(), 18).toString(),
+        asset: app.config.KOVAN_TEST_ASSET,
         wallet: expect.anything(),
         logger: expect.anything(),
       })
-      expect(transferTokenMock).toHaveBeenCalledWith({
+      expect(sendGasMock).toHaveBeenCalledWith({
         to: '0x27357319d22757483e1f64330068796E21C9b6ab',
-        amount: orderMock.cryptoAmount.toFixed(2),
-        asset: app.config.KOVAN_TEST_ASSET,
+        value: GAS_REQUIRED,
         wallet: expect.anything(),
         logger: expect.anything(),
       })

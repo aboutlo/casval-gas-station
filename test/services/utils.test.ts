@@ -2,12 +2,13 @@ import { mocked } from 'ts-jest/utils'
 import { Wallet } from 'ethers'
 
 import { TransakOrderStatus } from '../../src/services/types'
-import { sendGas } from '../../src/utils'
+import { sendGas } from '../../src/utils/sendGas'
 import { transferToken } from '../../src/utils/transferToken'
 import { GAS_REQUIRED, processOrderComplete } from '../../src/services/utils'
 import { BigNumber } from '@ethersproject/bignumber'
+import { formatUnits, parseUnits } from 'ethers/lib/utils'
 
-jest.mock('../../src/utils')
+jest.mock('../../src/utils/sendGas')
 jest.mock('../../src/utils/transferToken')
 jest.mock('ethers')
 
@@ -60,7 +61,8 @@ describe('processOrderComplete', () => {
       logger: expect.anything(),
       to: orderMock.walletAddress,
       asset: assetAddressMock,
-      amount: orderMock.cryptoAmount.toFixed(2),
+      amount: parseUnits(orderMock.cryptoAmount.toString(), 18).toString(),
+      // amount: orderMock.cryptoAmount.toFixed(2),
       wallet: expect.anything(),
     })
   })
