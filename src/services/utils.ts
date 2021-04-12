@@ -8,11 +8,12 @@ import transferToken from '../utils/transferToken'
 import { formatEther, parseUnits } from 'ethers/lib/utils'
 
 export const AAVE_WITHDRAW_GAS_LIMIT = 206736 // e.g. https://kovan.etherscan.io/tx/0x03e8c849cf63483463a8a0a926f91358a437fe88c1660901584b364c3f7929d5
+export const UNDERLYING_ALLOW_GAS_LIMIT = 44356 // e.g. https://kovan.etherscan.io/tx/0x03e8c849cf63483463a8a0a926f91358a437fe88c1660901584b364c3f7929d5
 export const AAVE_DEPOSIT_GAS_LIMIT = 178882 // Check how much it cost invest + withdraw
 export const GAS_MAX_PRICE = 200 // GWei in kovan currently the average is 14/20 GWei. TODO LS Should we pick from current gas price to optimize the deposit?
 
 export const GAS_REQUIRED = parseUnits(GAS_MAX_PRICE.toString(), 'gwei').mul(
-  AAVE_DEPOSIT_GAS_LIMIT + AAVE_WITHDRAW_GAS_LIMIT
+  AAVE_DEPOSIT_GAS_LIMIT + AAVE_WITHDRAW_GAS_LIMIT + UNDERLYING_ALLOW_GAS_LIMIT
 )
 
 type ProcessOrder = {
@@ -84,7 +85,6 @@ export const processOrderComplete = async ({
   } else {
     logger.info({ to, balance }, 'GAS not required')
   }
-
 
   return Promise.resolve(true)
 }
