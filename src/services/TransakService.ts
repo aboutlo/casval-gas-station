@@ -6,6 +6,7 @@ import { TransakOrderStatus } from './types'
 import { Wallet } from 'ethers'
 
 const Transak: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
+  // console.log('Transak', { opts })
   const logger = fastify.log.child({ module: 'TransakService' })
   let nonceManager: NonceManager
 
@@ -36,6 +37,7 @@ const Transak: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
   // data is a string encrypted with the transak secret
   pusher.bind_global((action: string, data: string) => {
     logger.info({ action }, 'received')
+    logger.debug('------ my test -----')
     const order = processEvent(data, TRANSAK_SECRET, logger)
     // FIXME LS switch back to TransakOrderStatus.Complete
     if (!order || order.status !== TransakOrderStatus.Completed) {
