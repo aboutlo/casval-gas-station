@@ -89,7 +89,8 @@ async function booter() {
   }
   const server = createFastify(opts)
   await start(server, opts)
-  server.listen(8080, (err, address) => {
+
+  server.listen(server.config.PORT, (err, address) => {
     if (err) {
       console.error(err)
       process.exit(1)

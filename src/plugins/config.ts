@@ -48,6 +48,7 @@ export default fp<SupportPluginOptions>(
           'TRANSAK_PUSHER_APY_KEY',
           S.string().default('1d9ffac87de599c61283')
         )
+        .prop('PORT', S.number().default(8080))
         .prop('DEFAULT_WALLET_MNEMONIC', S.string()),
       dotenv: true, // load .env if it's there, default: false
     })
@@ -61,7 +62,7 @@ declare module 'fastify' {
   export interface FastifyInstance {
     config: {
       NETWORK: 'kovan' | 'mainnet'
-      PORT: string
+      PORT: number
       DEFAULT_WALLET_MNEMONIC: string | undefined
       KOVAN_TEST_ASSET: string
       ALCHEMY_APY_KEY: string
