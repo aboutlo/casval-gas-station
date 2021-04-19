@@ -9,7 +9,7 @@
   "scripts": {
     "test": "TRANSAK_SERVICE=true DEFAULT_WALLET_MNEMONIC= jest",
     "test:watch": "TRANSAK_SERVICE=true DEFAULT_WALLET_MNEMONIC= jest --watchAll --detectOpenHandles",
-    "start": "FASTIFY_ADDRESS=0.0.0.0 node dist/app.js",
+    "start": "node dist/app.js",
     "build": "tsc",
     "dev": "tsc && concurrently -k -p \"[{name}]\" -n \"TypeScript,App\" -c \"yellow.bold,cyan.bold\"  \"tsc -w\" \"FASTIFY_ADDRESS=0.0.0.0 fastify start -w -l info -P dist/app.js\""
   },

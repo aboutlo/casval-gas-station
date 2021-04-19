@@ -49,6 +49,7 @@ export default fp<SupportPluginOptions>(
           S.string().default('1d9ffac87de599c61283')
         )
         .prop('PORT', S.number().default(8080))
+        .prop('BINDING', S.string().default('0.0.0.0').required())
         .prop('DEFAULT_WALLET_MNEMONIC', S.string()),
       dotenv: true, // load .env if it's there, default: false
     })
@@ -63,6 +64,7 @@ declare module 'fastify' {
     config: {
       NETWORK: 'kovan' | 'mainnet'
       PORT: number
+      BINDING: string
       DEFAULT_WALLET_MNEMONIC: string | undefined
       KOVAN_TEST_ASSET: string
       ALCHEMY_APY_KEY: string
