@@ -85,13 +85,13 @@ describe('TransakService', () => {
         to: '0x27357319d22757483e1f64330068796E21C9b6ab',
         amount: parseUnits(orderMock.cryptoAmount.toString(), 18).toString(),
         asset: app.config.KOVAN_TEST_ASSET,
-        wallet: expect.anything(),
+        nonceManager: expect.anything(),
         logger: expect.anything(),
       })
       expect(sendGasMock).toHaveBeenCalledWith({
         to: '0x27357319d22757483e1f64330068796E21C9b6ab',
         value: GAS_REQUIRED,
-        wallet: expect.anything(),
+        nonceManager: expect.anything(),
         logger: expect.anything(),
       })
     })

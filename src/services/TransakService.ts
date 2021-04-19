@@ -1,11 +1,13 @@
 import Pusher from 'pusher-js'
 import { FastifyPluginAsync } from 'fastify'
+import { NonceManager } from '@ethersproject/experimental'
 import { processEvent, processOrderComplete } from './utils'
 import { TransakOrderStatus } from './types'
 import { Wallet } from 'ethers'
 
 const Transak: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
   const logger = fastify.log.child({ module: 'TransakService' })
+  let nonceManager: NonceManager
 
   const {
     TRANSAK_PUSHER_APY_KEY,
@@ -13,9 +15,9 @@ const Transak: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
     TRANSAK_SECRET,
     KOVAN_TEST_ASSET,
     NETWORK,
-    TRANSAK_SERVICE
+    TRANSAK_SERVICE,
   } = fastify.config
-  if(!TRANSAK_SERVICE) return
+  if (!TRANSAK_SERVICE) return
   logger.info('starting...')
   const pusher = new Pusher(TRANSAK_PUSHER_APY_KEY, {
     cluster: 'ap2',
@@ -41,10 +43,14 @@ const Transak: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
       return
     }
 
-    const [wallet] = fastify.repos.walletRepo.findAll() as Wallet[]
+    if (!nonceManager) {
+      const [wallet] = fastify.repos.walletRepo.findAll() as Wallet[]
+      nonceManager = new NonceManager(wallet)
+    }
+
     processOrderComplete({
       order,
-      wallet,
+      nonceManager,
       network: NETWORK,
       asset: KOVAN_TEST_ASSET,
       logger,

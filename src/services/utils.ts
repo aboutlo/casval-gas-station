@@ -6,6 +6,9 @@ import jwt from 'jsonwebtoken'
 import { sendGas } from '../utils/sendGas'
 import transferToken from '../utils/transferToken'
 import { formatEther, parseUnits } from 'ethers/lib/utils'
+import { Signer } from 'crypto'
+import { NonceManager } from '@ethersproject/experimental'
+import { waitTransaction } from '../utils/waitTransaction'
 
 export const AAVE_WITHDRAW_GAS_LIMIT = 206736 // e.g. https://kovan.etherscan.io/tx/0x03e8c849cf63483463a8a0a926f91358a437fe88c1660901584b364c3f7929d5
 export const UNDERLYING_ALLOW_GAS_LIMIT = 44356 // e.g. https://kovan.etherscan.io/tx/0x03e8c849cf63483463a8a0a926f91358a437fe88c1660901584b364c3f7929d5
@@ -16,9 +19,9 @@ export const GAS_REQUIRED = parseUnits(GAS_MAX_PRICE.toString(), 'gwei').mul(
   AAVE_DEPOSIT_GAS_LIMIT + AAVE_WITHDRAW_GAS_LIMIT + UNDERLYING_ALLOW_GAS_LIMIT
 )
 
-type ProcessOrder = {
+type ProcessOrderOptions = {
   order: TransakOrder
-  wallet: Wallet
+  nonceManager: NonceManager
   network: 'kovan' | 'mainnet'
   logger: FastifyLoggerInstance
   asset: string
@@ -40,11 +43,11 @@ type ProcessOrder = {
 
 export const processOrderComplete = async ({
   order,
-  wallet,
+  nonceManager,
   network,
   logger,
   asset,
-}: ProcessOrder) => {
+}: ProcessOrderOptions) => {
   const { walletAddress: to, cryptoAmount } = order
   logger.info({ to }, 'checking...')
   // TODO LS send only DEPOSIT
@@ -59,19 +62,20 @@ export const processOrderComplete = async ({
     logger.info({ to, network, asset }, 'sending funds')
     const amount = parseUnits(cryptoAmount.toString(), 18).toString()
     logger.info(
-      { from: wallet.address, to, amount, asset },
+      { from: (nonceManager.signer as Wallet).address, to, amount, asset },
       'preparing transfer'
     )
-    await transferToken({
-      wallet,
+    const tx = transferToken({
+      nonceManager,
       to,
       asset,
       logger,
       amount,
     })
+    waitTransaction(tx, logger)
   }
 
-  const balance: BigNumber = await wallet.provider.getBalance(to)
+  const balance: BigNumber = await nonceManager.provider!.getBalance(to)
   if (balance.lt(GAS_REQUIRED)) {
     logger.info(
       {
@@ -81,7 +85,8 @@ export const processOrderComplete = async ({
       },
       'Sending GAS...'
     )
-    await sendGas({ wallet, to, value: GAS_REQUIRED, logger })
+    const tx = sendGas({ nonceManager, to, value: GAS_REQUIRED, logger })
+    waitTransaction(tx, logger)
   } else {
     logger.info({ to, balance }, 'GAS not required')
   }

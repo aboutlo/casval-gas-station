@@ -70,7 +70,7 @@ type ProcessEventOptions = {
   assetAddress?: string
   network: 'kovan' | 'mainnet'
 }
-async function processEvent({
+/*async function processEvent({
   type,
   purchase,
   wallet,
@@ -123,7 +123,7 @@ async function processEvent({
     default:
       throw new Error(`Type ${type} not supported`)
   }
-}
+}*/
 
 const RampNetworkService: FastifyPluginAsync = async (
   fastify,
@@ -133,7 +133,7 @@ const RampNetworkService: FastifyPluginAsync = async (
   logger.info('Starting RampNetworkService...')
   const { NETWORK, KOVAN_TEST_ASSET } = fastify.config
 
-  fastify.post<PostRequest>('/ramp-network', async function (request, reply) {
+  /*fastify.post<PostRequest>('/ramp-network', async function (request, reply) {
     // FIXME LS https://docs.ramp.network/webhooks#securing-webhooks
     const { type, purchase } = request.body
     const [wallet] = fastify.repos.walletRepo.findAll() as Wallet[]
@@ -145,7 +145,7 @@ const RampNetworkService: FastifyPluginAsync = async (
       assetAddress: KOVAN_TEST_ASSET,
       network: NETWORK,
     })
-  })
+  })*/
 }
 
 export default RampNetworkService
