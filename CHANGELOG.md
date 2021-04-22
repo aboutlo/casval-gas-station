@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.7](https://github.com/aboutlo/casval-gas-station/compare/v1.1.6...v1.1.7) (2021-04-22)
+
+
+### Bug Fixes
+
+* drop env var in the start script ([b31e27a](https://github.com/aboutlo/casval-gas-station/commit/b31e27a51a419fdd683a6baaf11ed00dbfe9ba40))
+
 ### [1.1.6](https://github.com/aboutlo/casval-gas-station/compare/v1.1.5...v1.1.6) (2021-04-22)
 
 
