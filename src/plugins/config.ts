@@ -40,11 +40,11 @@ export default fp<SupportPluginOptions>(
         )
         .prop(
           'MATICVIGIL_POLYGON_MUMBAI_RPC_URL',
-          S.string().default('https://rpc-mainnet.maticvigil.com/v1')
+          S.string().default('https://rpc-mumbai.maticvigil.com/v1')
         )
         .prop(
           'MATICVIGIL_POLYGON_MAINNET_RPC_URL',
-          S.string().default('https://rpc-mumbai.maticvigil.com/v1')
+          S.string().default('https://rpc-mainnet.maticvigil.com/v1')
         )
         .prop(
           'ETHERSCAN_APY_KEY',
