@@ -44,6 +44,7 @@ const Transak: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
     logger.info({ states }, 'pusher state_change')
   })
 
+  logger.info({ TRANSAK_API_KEY }, 'check env')
   const channel = pusher.subscribe(TRANSAK_API_KEY)
   logger.info({ channel: channel.name }, 'subscribe')
 
