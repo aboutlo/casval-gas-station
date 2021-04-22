@@ -3,8 +3,6 @@ import JWT from 'jsonwebtoken'
 import waitFor from 'wait-for-expect'
 import Pusher from 'pusher-js'
 import { TransakEventStatus } from '../../src/services/types'
-import fp from 'fastify-plugin'
-import App from '../../src/app'
 import { buildFakeTransakOrder, WalletRepoUtils } from '../models/utils'
 
 import { TransakOrderStatus } from '../../src/services/types'
@@ -81,7 +79,7 @@ describe('TransakService', () => {
     await WalletRepoUtils.delete(app, walletAddress)
   })
 
-  it('receives an order', async () => {
+  it('receives an order for ethereum', async () => {
     const order = JWT.sign(
       buildFakeTransakOrder({
         status: TransakEventStatus.Completed,
@@ -105,7 +103,7 @@ describe('TransakService', () => {
         nonceManager: expect.anything(),
         logger: expect.anything(),
       })
-      expect(waitTransaction).toHaveBeenCalledTimes(2)
+      expect(waitTransactionMock).toHaveBeenCalledTimes(2)
     })
   })
 })

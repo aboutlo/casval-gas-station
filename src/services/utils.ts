@@ -9,6 +9,7 @@ import { formatEther, parseUnits } from 'ethers/lib/utils'
 import { NonceManager } from '@ethersproject/experimental'
 import { waitTransaction } from '../utils/waitTransaction'
 import { Network } from '../plugins/providers'
+import { getNetwork } from './TransakService'
 
 export const AAVE_WITHDRAW_GAS_LIMIT = 206736 // e.g. https://kovan.etherscan.io/tx/0x03e8c849cf63483463a8a0a926f91358a437fe88c1660901584b364c3f7929d5
 export const UNDERLYING_ALLOW_GAS_LIMIT = 44356 // e.g. https://kovan.etherscan.io/tx/0x03e8c849cf63483463a8a0a926f91358a437fe88c1660901584b364c3f7929d5
@@ -58,8 +59,8 @@ export const processOrderComplete = async ({
   //   pot: '0x001'
   // }
   // check if this address received ether then send more gas
-
-  if (envName === 'kovan' && network === 'ethereum') {
+  const targetNetwork = getNetwork(networks, order.network)
+  if (targetNetwork === 'kovan') {
     const amount = parseUnits(cryptoAmount.toString(), 18).toString()
     logger.info(
       {
@@ -90,7 +91,7 @@ export const processOrderComplete = async ({
         balance: formatEther(balance),
         value: formatEther(GAS_REQUIRED),
         network,
-        envName
+        envName,
       },
       'Sending GAS...'
     )

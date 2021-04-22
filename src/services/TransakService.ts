@@ -6,7 +6,7 @@ import { TransakOrderStatus } from './types'
 import { Wallet } from 'ethers'
 import { Network } from '../plugins/providers'
 
-const getNetwork = (
+export const getNetwork = (
   networks: Network[],
   transakNetwork: 'ethereum' | 'matic' | 'mainnet'
 ) => {
@@ -28,7 +28,6 @@ const Transak: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
     TRANSAK_API_KEY,
     TRANSAK_SECRET,
     KOVAN_TEST_ASSET,
-    NETWORK,
     NETWORKS,
     TRANSAK_SERVICE,
   } = fastify.config

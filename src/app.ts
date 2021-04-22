@@ -93,7 +93,7 @@ export async function boot() {
 
   server.listen(server.config.PORT, server.config.BINDING, (err, address) => {
     if (err) {
-      console.error(err)
+      server.log.error(err)
       process.exit(1)
     }
     // console.log(`Server listening at ${address}`)
