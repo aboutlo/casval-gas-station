@@ -3,6 +3,7 @@ import fp from 'fastify-plugin'
 import App from '../../src/app'
 import { WalletRepoUtils } from '../models/utils'
 import { Wallet } from 'ethers'
+import boot from '../../src/app'
 
 const MNEMONIC =
   'stay apart adjust retire frame lumber usual amazing smoke worry outside wash'
@@ -14,13 +15,17 @@ async function config() {
 }
 
 async function build() {
-  const app = Fastify()
-
-  // fastify-plugin ensures that all decorators
-  // are exposed for testing purposes, this is
-  // different from the production setup
-  void app.register(fp(App))
-
+  // const app = Fastify()
+  //
+  // // fastify-plugin ensures that all decorators
+  // // are exposed for testing purposes, this is
+  // // different from the production setup
+  // void app.register(fp(App))
+  //
+  // await app.ready()
+  //
+  // return app
+  const app = await boot()
   await app.ready()
 
   return app
@@ -63,7 +68,12 @@ describe('Wallets', () => {
       const wallet = response.json<any>()
       const [address] = Object.keys(wallet)
       ids.push(address)
-      expect(wallet).toEqual({ [address]: { eth: '0.0' } })
+      expect(wallet).toEqual({
+        [address]: {
+          kovan: { GAS: '0.0' },
+          mumbai: { GAS: '0.0' },
+        },
+      })
     })
 
     it('returns a list of wallets', async () => {
@@ -73,7 +83,14 @@ describe('Wallets', () => {
       ids.push(address)
       const responses = await WalletRepoUtils.findAll(app)
       const wallets = responses.json<any>()
-      expect(wallets).toEqual([{ [address]: { eth: '0.0' } }])
+      expect(wallets).toEqual([
+        {
+          [address]: {
+            kovan: { GAS: '0.0' },
+            mumbai: { GAS: '0.0' },
+          },
+        },
+      ])
     })
   })
 })

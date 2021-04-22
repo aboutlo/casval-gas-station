@@ -6,8 +6,11 @@ import { sendGas } from '../../src/utils/sendGas'
 import { transferToken } from '../../src/utils/transferToken'
 import { GAS_REQUIRED, processOrderComplete } from '../../src/services/utils'
 import { BigNumber } from '@ethersproject/bignumber'
-import { formatUnits, parseUnits } from 'ethers/lib/utils'
+import { parseUnits } from 'ethers/lib/utils'
 import { NonceManager } from '@ethersproject/experimental'
+import { Network } from '../../src/plugins/providers'
+import { TransakOrder } from '../../dist/services/types'
+import { buildFakeTransakOrder } from '../models/utils'
 
 jest.mock('../../src/utils/sendGas')
 jest.mock('../../src/utils/transferToken')
@@ -22,12 +25,12 @@ const transferTokenMock = transferToken as jest.MockedFunction<
 
 describe('processOrderComplete', () => {
   const assetAddressMock = '0x001'
-  const orderMock: any = {
+  const orderMock = buildFakeTransakOrder({
     id: '123',
     status: TransakOrderStatus.Completed,
     cryptoAmount: 50.01,
     walletAddress: '0x27357319d22757483e1f64330068796E21C9b6ab',
-  }
+  })
 
   it('sends gas', async () => {
     walletMock.mockImplementation(() => {
@@ -65,7 +68,7 @@ describe('processOrderComplete', () => {
       processOrderComplete({
         order: orderMock,
         nonceManager,
-        network: 'kovan',
+        networks: [Network.Kovan],
         logger: loggerInstance(),
         asset: assetAddressMock,
       })

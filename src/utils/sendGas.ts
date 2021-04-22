@@ -1,4 +1,3 @@
-import { Wallet } from 'ethers'
 import { FastifyLoggerInstance } from 'fastify'
 import { BigNumber } from '@ethersproject/bignumber'
 import { NonceManager } from '@ethersproject/experimental'
@@ -31,7 +30,7 @@ export async function sendGas({
   }
 
   // Don't block the thread for the transaction to be mined.
-  // Once we got a transactionResponse we return immediately so that the nonceManager can increment the nonce
+  // Once we got a transactionResponse we return immediately so that the nonceManager can proceed to the next transaction
   transactionResponse
     .wait()
     .then((receipt: TransactionReceipt) => {

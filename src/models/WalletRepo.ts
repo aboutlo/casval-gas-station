@@ -7,19 +7,14 @@ interface Repo<T> {
 
 export class WalletRepo implements Repo<any> {
   private storage: Map<string, EtherWallet>
-  private provider: providers.Provider
 
-  constructor(provider: providers.Provider) {
+  constructor() {
     this.storage = new Map()
-    this.provider = provider
   }
 
   create(mnemonic: string, path = DEFAULT_DERIVATION_PATH) {
     const wallet = EtherWallet.fromMnemonic(mnemonic, path)
-    this.storage.set(
-      wallet.address,
-      new EtherWallet(wallet.privateKey, this.provider)
-    )
+    this.storage.set(wallet.address, new EtherWallet(wallet.privateKey))
     return this.find(wallet.address)
   }
 

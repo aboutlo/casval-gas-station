@@ -6,9 +6,9 @@ import jwt from 'jsonwebtoken'
 import { sendGas } from '../utils/sendGas'
 import transferToken from '../utils/transferToken'
 import { formatEther, parseUnits } from 'ethers/lib/utils'
-import { Signer } from 'crypto'
 import { NonceManager } from '@ethersproject/experimental'
 import { waitTransaction } from '../utils/waitTransaction'
+import { Network } from '../plugins/providers'
 
 export const AAVE_WITHDRAW_GAS_LIMIT = 206736 // e.g. https://kovan.etherscan.io/tx/0x03e8c849cf63483463a8a0a926f91358a437fe88c1660901584b364c3f7929d5
 export const UNDERLYING_ALLOW_GAS_LIMIT = 44356 // e.g. https://kovan.etherscan.io/tx/0x03e8c849cf63483463a8a0a926f91358a437fe88c1660901584b364c3f7929d5
@@ -22,7 +22,7 @@ export const GAS_REQUIRED = parseUnits(GAS_MAX_PRICE.toString(), 'gwei').mul(
 type ProcessOrderOptions = {
   order: TransakOrder
   nonceManager: NonceManager
-  network: 'kovan' | 'mainnet'
+  networks: Network[]
   logger: FastifyLoggerInstance
   asset: string
 }
@@ -44,12 +44,12 @@ type ProcessOrderOptions = {
 export const processOrderComplete = async ({
   order,
   nonceManager,
-  network,
+  networks,
   logger,
   asset,
 }: ProcessOrderOptions) => {
-  const { walletAddress: to, cryptoAmount } = order
-  logger.info({ to }, 'checking...')
+  const { walletAddress: to, cryptoAmount, network, envName } = order
+  logger.info({ to, network, envName }, 'checking...')
   // TODO LS send only DEPOSIT
   // Implement ask for GAS on demand POST /gas
   // {
@@ -58,12 +58,19 @@ export const processOrderComplete = async ({
   //   pot: '0x001'
   // }
   // check if this address received ether then send more gas
-  if (network === 'kovan') {
-    logger.info({ to, network, asset }, 'sending funds')
+
+  if (envName === 'kovan' && network === 'ethereum') {
     const amount = parseUnits(cryptoAmount.toString(), 18).toString()
     logger.info(
-      { from: (nonceManager.signer as Wallet).address, to, amount, asset },
-      'preparing transfer'
+      {
+        from: (nonceManager.signer as Wallet).address,
+        to,
+        amount,
+        asset,
+        network,
+        envName,
+      },
+      'preparing transfer...'
     )
     const tx = transferToken({
       nonceManager,
@@ -82,13 +89,15 @@ export const processOrderComplete = async ({
         to,
         balance: formatEther(balance),
         value: formatEther(GAS_REQUIRED),
+        network,
+        envName
       },
       'Sending GAS...'
     )
     const tx = sendGas({ nonceManager, to, value: GAS_REQUIRED, logger })
     waitTransaction(tx, logger)
   } else {
-    logger.info({ to, balance }, 'GAS not required')
+    logger.info({ to, network, balance }, 'GAS not required')
   }
 
   return Promise.resolve(true)
@@ -101,10 +110,6 @@ export function processEvent(
 ) {
   try {
     const order = jwt.verify(data, secret) as TransakOrder
-    logger.info(
-      { status: order.status, id: order.id, wallet: order.walletAddress },
-      'processed'
-    )
     return order
   } catch (e) {
     logger.warn({ message: e.message }, 'processEvent failed')

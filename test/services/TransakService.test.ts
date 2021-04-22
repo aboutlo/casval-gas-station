@@ -5,23 +5,29 @@ import Pusher from 'pusher-js'
 import { TransakEventStatus } from '../../src/services/types'
 import fp from 'fastify-plugin'
 import App from '../../src/app'
-import { WalletRepoUtils } from '../models/utils'
+import { buildFakeTransakOrder, WalletRepoUtils } from '../models/utils'
 
 import { TransakOrderStatus } from '../../src/services/types'
 import { sendGas } from '../../src/utils/sendGas'
 import { transferToken } from '../../src/utils/transferToken'
+import { waitTransaction } from '../../src/utils/waitTransaction'
 import { GAS_REQUIRED } from '../../src/services/utils'
 import { PusherMockImplementation } from '../PusherMock'
 import { formatUnits, parseUnits } from 'ethers/lib/utils'
+import boot from '../../src/app'
 
 jest.mock('pusher-js')
 jest.mock('../../src/utils/sendGas')
 jest.mock('../../src/utils/transferToken')
+jest.mock('../../src/utils/waitTransaction')
 jest.mock('jsonwebtoken')
 
 const sendGasMock = sendGas as jest.MockedFunction<typeof sendGas>
 const transferTokenMock = transferToken as jest.MockedFunction<
   typeof transferToken
+>
+const waitTransactionMock = waitTransaction as jest.MockedFunction<
+  typeof waitTransaction
 >
 const PusherMock = (Pusher as unknown) as jest.Mock
 const JWTMock = (JWT as unknown) as jest.Mocked<typeof JWT>
@@ -30,13 +36,13 @@ const MNEMONIC_MOCK =
   'stay apart adjust retire frame lumber usual amazing smoke worry outside wash'
 
 async function build() {
-  const app = Fastify()
-
-  // fastify-plugin ensures that all decorators
-  // are exposed for testing purposes, this is
-  // different from the production setup
-  void app.register(fp(App))
-
+  // const app = Fastify()
+  //
+  // // fastify-plugin ensures that all decorators
+  // // are exposed for testing purposes, this is
+  // // different from the production setup
+  // void app.register(fp(App))
+  const app = await boot()
   await app.ready()
 
   return app
@@ -47,12 +53,12 @@ describe('TransakService', () => {
   let walletAddress: string
   let pusher: PusherMockImplementation
 
-  const orderMock = {
-    id: 123,
+  const orderMock = buildFakeTransakOrder({
+    id: '123',
     status: TransakOrderStatus.Completed,
     cryptoAmount: 50.01,
     walletAddress: '0x27357319d22757483e1f64330068796E21C9b6ab',
-  }
+  })
 
   beforeAll(async () => {
     pusher = new PusherMockImplementation('apiKey', {
@@ -76,7 +82,12 @@ describe('TransakService', () => {
   })
 
   it('receives an order', async () => {
-    const order = JWT.sign({ id: '123' }, 'secret')
+    const order = JWT.sign(
+      buildFakeTransakOrder({
+        status: TransakEventStatus.Completed,
+      }),
+      'secret'
+    )
 
     pusher.global_emitter.emit(TransakEventStatus.Completed, order)
 
@@ -94,6 +105,7 @@ describe('TransakService', () => {
         nonceManager: expect.anything(),
         logger: expect.anything(),
       })
+      expect(waitTransaction).toHaveBeenCalledTimes(2)
     })
   })
 })

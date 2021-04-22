@@ -12,7 +12,6 @@ const ProviderMock = mocked(JsonRpcProvider)
 
 describe('WalletRepoUtils', () => {
   let mnemonic: string
-  const provider = new JsonRpcProvider()
   const addressMock = '0x27357319d22757483e1f64330068796E21C9b6ab'
   const balanceMock = BigNumber.from('10')
 
@@ -28,25 +27,25 @@ describe('WalletRepoUtils', () => {
   })
   it('is defined', () => {
 
-    expect(new WalletRepo(provider)).toBeInstanceOf(WalletRepo)
+    expect(new WalletRepo()).toBeInstanceOf(WalletRepo)
   })
 
   it('adds one', () => {
     expect.assertions(1)
-    const repo = new WalletRepo(provider)
+    const repo = new WalletRepo()
     const wallet = repo.create(mnemonic)
     expect(wallet).toBeInstanceOf(WalletMock)
   })
 
   it('finds one', () => {
     expect.assertions(1)
-    const walletRepo = new WalletRepo(provider)
+    const walletRepo = new WalletRepo()
     const wallet = walletRepo.create(mnemonic)
     expect(walletRepo.find(wallet.address)).toBeInstanceOf(WalletMock)
   })
 
   it('finds all', () => {
-    const walletRepo = new WalletRepo(provider)
+    const walletRepo = new WalletRepo()
     walletRepo.create(mnemonic)
     const wallets = walletRepo.findAll()
     expect(wallets).toHaveLength(1)

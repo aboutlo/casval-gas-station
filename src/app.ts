@@ -43,7 +43,7 @@ const start: FastifyPluginAsync<AppOptions> = async (
   // // 0.0.0.0 is required for docker
 }
 
-async function booter() {
+export async function boot() {
   // Map Pino levels to Google Cloud Logging severity levels
   // https://cloud.google.com/logging/docs/reference/v2/rest/v2/LogEntry#LogSeverity
   const levelToSeverity = {
@@ -71,7 +71,8 @@ async function booter() {
                     'type.googleapis.com/google.devtools.clouderrorreporting.v1beta1.ReportedErrorEvent',
                 }
               : {}
-          return { level: label, severity, ...typeProp }
+          // return { level: label, severity, ...typeProp }
+          return { severity, ...typeProp }
         },
         log(object: any) {
           const logObject = object as { err?: Error }
@@ -90,12 +91,13 @@ async function booter() {
   const server = createFastify(opts)
   await start(server, opts)
 
-  server.listen(server.config.PORT, server.config.BINDING,(err, address) => {
+  server.listen(server.config.PORT, server.config.BINDING, (err, address) => {
     if (err) {
       console.error(err)
       process.exit(1)
     }
-    console.log(`Server listening at ${address}`)
+    // console.log(`Server listening at ${address}`)
   })
+  return server
 }
-booter()
+export default boot

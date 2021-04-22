@@ -31,7 +31,7 @@ export type TransakOrder = {
   quoteId: string // "fa26443e-176f-457b-b775-4752466168ac",
   bankId: string // "1cbcee9b-0420-4442-b701-fab8d0005b88",
   addressAdditionalData: boolean //  false,
-  network: string // "ethereum",
+  network: 'ethereum' | 'mainnet' | 'matic'
   cryptocurrency: string // "DAI",
   amountPaid: number // 500,
   envName: string // "v2-staging",
@@ -44,7 +44,7 @@ export type TransakOrder = {
   updatedAt: string // "2021-03-17T10:09:53.369Z",
   transactionHash: string // "0x538ad0ff53101db67aab423478f045142f707961564c23c5db1d2e18283f1c7a",
   transactionLink: string // "https://kovan.etherscan.io/tx/0x538ad0ff53101db67aab423478f045142f707961564c23c5db1d2e18283f1c7a",
-  completedAt: string // "2021-03-17T10:10:09.077Z",
+  completedAt?: string // "2021-03-17T10:10:09.077Z",
   partnerFeeInLocalCurrency: number // 0
   paymentOptions: {
     currency: string
