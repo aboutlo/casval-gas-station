@@ -12,7 +12,7 @@
     "test:watch": "LOG_LEVEL=error TRANSAK_SERVICE=true DEFAULT_WALLET_MNEMONIC= jest --watchAll --detectOpenHandles",
     "start": "node dist/server.js",
     "build": "tsc",
-    "dev": "tsc && concurrently -k -p \"[{name}]\" -n \"TypeScript,App\" -c \"yellow.bold,cyan.bold\"  \"tsc -w\" \"BINDING=0.0.0.0 node dist/server.js\"",
+    "dev": "tsc && concurrently -k -p \"[{name}]\" -n \"TypeScript,App\" -c \"yellow.bold,cyan.bold\"  \"tsc -w\" \"node dist/server.js\"",
     "release": "standard-version"
   },
   "keywords": [],
