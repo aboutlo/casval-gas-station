@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.5](https://github.com/aboutlo/casval-gas-station/compare/v1.1.4...v1.1.5) (2021-04-22)
+
+
+### Bug Fixes
+
+* swap polygon rpc urls between mumbay and mainnet ([0df9bb0](https://github.com/aboutlo/casval-gas-station/commit/0df9bb01f19c5edd39efd6e9e0d1760b1a6ac5a3))
+
 ### [1.1.4](https://github.com/aboutlo/casval-gas-station/compare/v1.1.3...v1.1.4) (2021-04-22)
 
 ### [1.1.3](https://github.com/aboutlo/casval-gas-station/compare/v1.1.2...v1.1.3) (2021-04-22)
