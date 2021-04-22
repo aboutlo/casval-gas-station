@@ -1,6 +1,6 @@
 {
   "name": "casval-gas-station",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "private": true,
   "description": "",
   "main": "app.ts",
@@ -10,7 +10,7 @@
   "scripts": {
     "test": "LOG_LEVEL=error TRANSAK_SERVICE=true DEFAULT_WALLET_MNEMONIC= jest --runInBand",
     "test:watch": "LOG_LEVEL=error TRANSAK_SERVICE=true DEFAULT_WALLET_MNEMONIC= jest --watchAll --detectOpenHandles",
-    "start": "node dist/server.js",
+    "start": "TRANSAK_API_KEY=BOOM TRANSAK_SERVICE=true node dist/server.js",
     "build": "tsc",
     "dev": "tsc && concurrently -k -p \"[{name}]\" -n \"TypeScript,App\" -c \"yellow.bold,cyan.bold\"  \"tsc -w\" \"node dist/server.js\"",
     "release": "standard-version"

@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.6](https://github.com/aboutlo/casval-gas-station/compare/v1.1.5...v1.1.6) (2021-04-22)
+
+
+### Bug Fixes
+
+* add log to print transak env var ([98371e0](https://github.com/aboutlo/casval-gas-station/commit/98371e0c5425f13f261e3e04c27bc4d9710ebeff))
+
 ### [1.1.5](https://github.com/aboutlo/casval-gas-station/compare/v1.1.4...v1.1.5) (2021-04-22)
 
 
