@@ -3,11 +3,6 @@ import { Wallet } from 'ethers'
 import { formatEther } from 'ethers/lib/utils'
 import { BaseProvider } from '@ethersproject/providers'
 import { Network } from '../../plugins/providers'
-import { NonceManager } from '@ethersproject/experimental'
-
-// import { WalletRepo } from '../../models/WalletRepo'
-
-// const walletRepo = new WalletRepo()
 
 interface FindRequest extends RequestGenericInterface {
   Params: {

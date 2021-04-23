@@ -27,20 +27,20 @@ const start: FastifyPluginAsync<AppOptions> = async (
 
   // This loads all plugins defined in routes
   // define your routes in one of these
+  // FIXME LS move plugins in a different directory and drop this autoload
   void fastify.register(AutoLoad, {
-    dir: join(__dirname, 'routes'),
+    dir: join(__dirname, 'services'),
+    ignorePattern: /.*(types|utils|orders|Refills).*/,
     options: opts,
   })
 
   // This loads all plugins defined in routes
   // define your routes in one of these
   void fastify.register(AutoLoad, {
-    dir: join(__dirname, 'services'),
-    ignorePattern: /.*(types|utils).*/,
+    dir: join(__dirname, 'routes'),
     options: opts,
   })
-  // TODO USE https://github.com/fastify/env-schema
-  // // 0.0.0.0 is required for docker
+
 }
 
 export async function boot() {

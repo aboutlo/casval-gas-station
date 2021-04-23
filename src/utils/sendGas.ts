@@ -26,7 +26,7 @@ export async function sendGas({
     localLogger.info({ hash: transactionResponse.hash }, 'submitted')
   } catch (e) {
     localLogger.error(`sendTransaction failed ${e.message}`)
-    return
+    throw new e
   }
 
   // Don't block the thread for the transaction to be mined.

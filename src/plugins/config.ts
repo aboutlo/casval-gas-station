@@ -51,6 +51,10 @@ export default fp<SupportPluginOptions>(
           S.string().default('82QKD4WKI5R4D6JZJWKN3GIITS6EHRNEQM')
         )
         .prop(
+          'TRANSAK_BASE_URL',
+          S.string().default('https://staging-api.transak.com/api/v2')
+        )
+        .prop(
           'TRANSAK_API_KEY',
           S.string().default('0b1a0c3b-6684-4c38-8349-715567beba6c')
         )
@@ -90,6 +94,7 @@ declare module 'fastify' {
       MATICVIGIL_POLYGON_MUMBAI_RPC_URL: string
       INFURA_APY_KEY: string
       ETHERSCAN_APY_KEY: string
+      TRANSAK_BASE_URL: string
       TRANSAK_PUSHER_APY_KEY: string
       TRANSAK_SECRET: string
       TRANSAK_API_KEY: string

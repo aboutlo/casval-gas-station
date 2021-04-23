@@ -20,6 +20,8 @@ export const getNetwork = (
       return isProd ? Network.Polygon : Network.Mumbai
   }
 }
+
+//  TODO extract this as service and move the init in plugins
 const Transak: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
   const logger = fastify.log.child({ module: 'TransakService' })
   let nonceManagers: Map<Network, NonceManager>
@@ -44,11 +46,8 @@ const Transak: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
     logger.info({ states }, 'pusher state_change')
   })
 
-  logger.info({ TRANSAK_API_KEY }, 'check env')
   const channel = pusher.subscribe(TRANSAK_API_KEY)
   logger.info({ channel: channel.name }, 'subscribe')
-
-
 
   // action can be an orderId or `pusher:pong` as string
   // data is a string encrypted with the transak secret
@@ -62,11 +61,13 @@ const Transak: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
       return
     }
 
-    if(!nonceManagers) {
+    if (!nonceManagers) {
       const [wallet] = fastify.repos.walletRepo.findAll() as Wallet[]
       nonceManagers = NETWORKS.reduce((memo, network) => {
         const provider = fastify.providers[network]
-        const nonceManager = new NonceManager(new Wallet(wallet.privateKey, provider))
+        const nonceManager = new NonceManager(
+          new Wallet(wallet.privateKey, provider)
+        )
         memo.set(network, nonceManager)
         return memo
       }, new Map<Network, NonceManager>())
@@ -74,7 +75,7 @@ const Transak: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
 
     const network = getNetwork(NETWORKS, order.network)
     const nonceManager = nonceManagers.get(network)
-    const asset = KOVAN_TEST_ASSET  // FIXME mumbai won't work with this asset
+    const asset = KOVAN_TEST_ASSET // FIXME mumbai won't work with this asset
     if (!nonceManager)
       throw new Error(
         `Failed to map ${

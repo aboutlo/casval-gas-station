@@ -20,7 +20,7 @@ export type TransakOrder = {
   id: string
   walletAddress: string //"0x40dc2F9Ef3eb24002197EaDfC820a0a2a78BE6cF",
   createdAt: string //"2021-03-17T10:09:11.813Z",
-  status: string //"COMPLETED",
+  status: TransakOrderStatus //"COMPLETED",
   fiatCurrency: string //"EUR",
   cryptoCurrency: string //"DAI",
   isBuyOrSell: string //"BUY",
