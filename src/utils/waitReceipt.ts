@@ -4,21 +4,21 @@ import {
 } from '@ethersproject/abstract-provider'
 import { FastifyLoggerInstance } from 'fastify'
 
-export const waitTransaction = async (
-  transactionResponse: Promise<TransactionResponse | undefined>,
+export const waitReceipt = async (
+  tx: TransactionResponse,
   logger: FastifyLoggerInstance
 ) => {
-  const tx = await transactionResponse
   if (!tx) {
     logger.warn('tx not accepted')
     return
   }
-  return tx
-    .wait()
+  tx.wait()
     .then((receipt: TransactionReceipt) => {
       logger.info({ receipt: receipt.transactionHash }, 'mined')
     })
     .catch((e) => {
       logger.error(`waitTransaction failed ${e.message}`)
     })
+
+  return tx
 }

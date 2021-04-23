@@ -24,23 +24,11 @@ export async function sendGas({
       value,
     })
     localLogger.info({ hash: transactionResponse.hash }, 'submitted')
+    return transactionResponse
   } catch (e) {
     localLogger.error(`sendTransaction failed ${e.message}`)
-    throw new e
+    throw new e()
   }
-
-  // Don't block the thread for the transaction to be mined.
-  // Once we got a transactionResponse we return immediately so that the nonceManager can proceed to the next transaction
-  transactionResponse
-    .wait()
-    .then((receipt: TransactionReceipt) => {
-      localLogger.info({ receipt: receipt.transactionHash }, 'mined')
-    })
-    .catch((e) => {
-      localLogger.error(`wait failed ${e.message}`)
-    })
-
-  return transactionResponse
 }
 
 export default sendGas

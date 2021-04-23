@@ -7,7 +7,7 @@ import { sendGas } from '../utils/sendGas'
 import transferToken from '../utils/transferToken'
 import { formatEther, parseUnits } from 'ethers/lib/utils'
 import { NonceManager } from '@ethersproject/experimental'
-import { waitTransaction } from '../utils/waitTransaction'
+import { waitReceipt } from '../utils/waitReceipt'
 import { Network } from '../plugins/providers'
 import { getNetwork } from './TransakService'
 
@@ -73,14 +73,14 @@ export const processOrderComplete = async ({
       },
       'preparing transfer...'
     )
-    const tx = transferToken({
+    const tx = await transferToken({
       nonceManager,
       to,
       asset,
       logger,
       amount,
     })
-    waitTransaction(tx, logger)
+    waitReceipt(tx, logger)
   }
 
   const balance: BigNumber = await nonceManager.provider!.getBalance(to)
@@ -95,8 +95,8 @@ export const processOrderComplete = async ({
       },
       'Sending GAS...'
     )
-    const tx = sendGas({ nonceManager, to, value: GAS_REQUIRED, logger })
-    waitTransaction(tx, logger)
+    const tx = await sendGas({ nonceManager, to, value: GAS_REQUIRED, logger })
+    waitReceipt(tx, logger)
   } else {
     logger.info({ to, network, balance }, 'GAS not required')
   }

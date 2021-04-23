@@ -23,25 +23,13 @@ export async function transferToken({
   const contract = new Contract(asset, ERC20ABI, nonceManager)
   let transactionResponse: TransactionResponse
   try {
-    // const funds = parseUnits(amount, 18)
-    // localLogger.info(
-    //   { from: wallet.address, to, funds, asset },
-    //   'preparing transfer'
-    // )
     transactionResponse = await contract.transfer(to, amount)
     localLogger.info({ hash: transactionResponse.hash }, 'submitted')
+    return transactionResponse
   } catch (e) {
     localLogger.error(`sendTransaction failed: ${e.message}`)
-    return
+    throw e
   }
-
-  try {
-    const receipt = await transactionResponse.wait()
-    localLogger.info({ receipt: receipt.transactionHash }, 'mined')
-  } catch (e) {
-    localLogger.error(`wait failed ${e.message}`)
-  }
-  return transactionResponse
 }
 
 export default transferToken

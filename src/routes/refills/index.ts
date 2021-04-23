@@ -1,5 +1,5 @@
 import { FastifyPluginAsync, RequestGenericInterface } from 'fastify'
-import { RefillsService } from '../../services/RefillsService'
+import { RefillError, RefillsService } from '../../services/RefillsService'
 import { Network } from '../../plugins/providers'
 import S from 'fluent-json-schema'
 
@@ -41,7 +41,16 @@ export const RefillsRoutes: FastifyPluginAsync = async (
     },
     async function (request, reply) {
       const { address, network } = request.body
-      return refillService.refill(address, network as Network)
+      return refillService
+        .refill(address, network as Network)
+        .catch((error) => {
+          if (error instanceof RefillError) {
+            fastify.log.warn(error)
+            return reply.status(400).send(error)
+          }
+          fastify.log.error(error)
+          return reply.status(500).send('Something went wrong')
+        })
     }
   )
 }

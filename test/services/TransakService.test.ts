@@ -8,7 +8,7 @@ import { buildFakeTransakOrder, WalletRepoUtils } from '../models/utils'
 import { TransakOrderStatus } from '../../src/services/types'
 import { sendGas } from '../../src/utils/sendGas'
 import { transferToken } from '../../src/utils/transferToken'
-import { waitTransaction } from '../../src/utils/waitTransaction'
+import { waitReceipt } from '../../src/utils/waitReceipt'
 import { GAS_REQUIRED } from '../../src/services/utils'
 import { PusherMockImplementation } from '../PusherMock'
 import { formatUnits, parseUnits } from 'ethers/lib/utils'
@@ -17,15 +17,15 @@ import boot from '../../src/app'
 jest.mock('pusher-js')
 jest.mock('../../src/utils/sendGas')
 jest.mock('../../src/utils/transferToken')
-jest.mock('../../src/utils/waitTransaction')
+jest.mock('../../src/utils/waitReceipt')
 jest.mock('jsonwebtoken')
 
 const sendGasMock = sendGas as jest.MockedFunction<typeof sendGas>
 const transferTokenMock = transferToken as jest.MockedFunction<
   typeof transferToken
 >
-const waitTransactionMock = waitTransaction as jest.MockedFunction<
-  typeof waitTransaction
+const waitTransactionMock = waitReceipt as jest.MockedFunction<
+  typeof waitReceipt
 >
 const PusherMock = (Pusher as unknown) as jest.Mock
 const JWTMock = (JWT as unknown) as jest.Mocked<typeof JWT>

@@ -7,7 +7,9 @@ import { Network, Providers } from '../plugins/providers'
 import { GAS_REQUIRED } from './utils'
 import sendGas from '../utils/sendGas'
 import { NonceManager } from '@ethersproject/experimental'
-import { formatEther, formatUnits } from 'ethers/lib/utils'
+import { formatEther, formatUnits, parseUnits } from 'ethers/lib/utils'
+import { waitReceipt } from '../utils/waitReceipt'
+import transferToken from '../utils/transferToken'
 
 const isPaid = (o: TransakOrder) => {
   return [
@@ -39,6 +41,15 @@ type RefillsServiceOptions = {
   providers: Providers
   wallet: Wallet
 }
+
+export class RefillError extends Error {
+  constructor(msg: string) {
+    super(msg)
+    Object.setPrototypeOf(this, RefillError.prototype)
+    this.name = 'RefillError' // (2)
+  }
+}
+
 export class RefillsService implements Repo<any> {
   private logger: FastifyLoggerInstance
   private orderService: TransakOrderService
@@ -68,7 +79,8 @@ export class RefillsService implements Repo<any> {
     this.logger.info({ address }, 'refill...')
 
     const nonceManager = this.nonceManagers.get(network)
-    if (!nonceManager) throw new Error(`NonceManger not found for ${network}`)
+    if (!nonceManager)
+      throw new RefillError(`NonceManger not found for ${network}`)
 
     const orders: TransakOrder[] = await this.orderService.findAll()
     const [order] = orders
@@ -76,15 +88,17 @@ export class RefillsService implements Repo<any> {
       .filter(hasNetwork(network))
       .filter(isPaid)
 
-    if (!order) throw new Error(`No order paid for ${address} on ${network}`)
+    if (!order)
+      throw new RefillError(`No order paid for ${address} on ${network}`)
 
     this.logger.info({ address }, 'checking balances...')
 
     const available = await nonceManager.signer.getBalance()
     if (available.lt(GAS_REQUIRED))
-      throw new Error(`Gas stations out of gas ${formatEther(available)}`)
+      throw new RefillError(`Gas stations out of gas ${formatEther(available)}`)
 
     const balance = await nonceManager.provider!.getBalance(address)
+
     if (balance.lt(GAS_REQUIRED)) {
       const tx = await sendGas({
         nonceManager,
@@ -92,6 +106,22 @@ export class RefillsService implements Repo<any> {
         value: GAS_REQUIRED,
         logger: this.logger,
       })
+
+      waitReceipt(tx, this.logger)
+
+      if (network === 'kovan') {
+        const amount = parseUnits(order.cryptoAmount.toString(), 18).toString()
+        const tx = await transferToken({
+          nonceManager,
+          to: address,
+          logger: this.logger,
+          // FIXME LS read from config
+          asset: '0xff795577d9ac8bd7d90ee22b6c1703490b6512fd',
+          amount,
+        })
+        waitReceipt(tx, this.logger)
+      }
+
       return tx.hash
     }
 
@@ -100,7 +130,8 @@ export class RefillsService implements Repo<any> {
       { address, status, balance: balance.toString() },
       'rejected'
     )
-    throw new Error(
+
+    throw new RefillError(
       `Rejected: ${address} on ${network} has ${formatUnits(balance)} GAS`
     )
   }
