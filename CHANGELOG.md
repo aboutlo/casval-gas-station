@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.0](https://github.com/aboutlo/casval-gas-station/compare/v1.1.7...v1.2.0) (2021-04-24)
+
+
+### Features
+
+* add gas refill on demand ([a46c363](https://github.com/aboutlo/casval-gas-station/commit/a46c363f76b858239b8cecd3a0a96e86c78f6cb3))
+* gas refill rework ([9c786b2](https://github.com/aboutlo/casval-gas-station/commit/9c786b2ca44296f02b0922fe2f1fb9e5bd06b64d))
+
 ### [1.1.7](https://github.com/aboutlo/casval-gas-station/compare/v1.1.6...v1.1.7) (2021-04-22)
 
 
