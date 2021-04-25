@@ -2,9 +2,10 @@ import Pusher from 'pusher-js'
 import { FastifyPluginAsync } from 'fastify'
 import { NonceManager } from '@ethersproject/experimental'
 import { processEvent, processOrderComplete } from './utils'
-import { TransakOrderStatus } from './types'
+import { TransakOrder, TransakOrderStatus } from './types'
 import { Wallet } from 'ethers'
 import { Network } from '../plugins/providers'
+import jwt from 'jsonwebtoken'
 
 export const getNetwork = (
   networks: Network[],
@@ -34,7 +35,6 @@ const Transak: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
     TRANSAK_SERVICE,
   } = fastify.config
 
-  if (!TRANSAK_SERVICE) return
   logger.info('starting...')
   const pusher = new Pusher(TRANSAK_PUSHER_APY_KEY, {
     cluster: 'ap2',
@@ -55,14 +55,36 @@ const Transak: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
     logger.info({ action }, 'received')
 
     const order = processEvent(data, TRANSAK_SECRET, logger)
-    // FIXME LS switch back to TransakOrderStatus.Complete
-    if (!order || order.status !== TransakOrderStatus.Completed) {
-      logger.info({ orderId: order?.id, status: order?.status }, 'skipping...')
+
+    if (!order) {
+      logger.info(`ignore ${action}`)
       return
     }
 
+    if (!TRANSAK_SERVICE) {
+      logger.info(
+        { orderId: order.id, status: order.status },
+        `service disable ignoring ${action}`
+      )
+      return
+    }
+
+    if (order.status !== TransakOrderStatus.Completed) {
+      logger.info(
+        { orderId: order.id, status: order.status },
+        'order not ready'
+      )
+      return
+    }
+
+    logger.info({ id: order.id, status: order.status }, 'process order...')
     if (!nonceManagers) {
+      logger.info(
+        { id: order.id, status: order.status },
+        'configure nonceMangers ...'
+      )
       const [wallet] = fastify.repos.walletRepo.findAll() as Wallet[]
+
       nonceManagers = NETWORKS.reduce((memo, network) => {
         const provider = fastify.providers[network]
         const nonceManager = new NonceManager(
@@ -71,17 +93,26 @@ const Transak: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
         memo.set(network, nonceManager)
         return memo
       }, new Map<Network, NonceManager>())
+
+      logger.info(
+        `${nonceManagers.size} nonceMangers configured for ${NETWORKS.join(
+          ' '
+        )}`
+      )
     }
 
     const network = getNetwork(NETWORKS, order.network)
+    logger.info({ network }, 'network detected')
+
     const nonceManager = nonceManagers.get(network)
     const asset = KOVAN_TEST_ASSET // FIXME mumbai won't work with this asset
     if (!nonceManager)
       throw new Error(
         `Failed to map ${
           order.network
-        } to one of the available networks: ${NETWORKS.join()}`
+        } to one of the available networks: ${NETWORKS.join(' ')}`
       )
+
     processOrderComplete({
       order,
       nonceManager,

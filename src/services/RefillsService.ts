@@ -1,7 +1,6 @@
 import { TransakOrder, TransakOrderStatus } from './types'
 import { FastifyLoggerInstance } from 'fastify'
 import { TransakOrderService } from './transak/orders'
-import { TransactionResponse } from '@ethersproject/abstract-provider'
 import { Wallet } from 'ethers'
 import { Network, Providers } from '../plugins/providers'
 import { GAS_REQUIRED } from './utils'

@@ -110,10 +110,9 @@ export function processEvent(
   logger: FastifyLoggerInstance
 ) {
   try {
-    const order = jwt.verify(data, secret) as TransakOrder
-    return order
+    return jwt.verify(data, secret) as TransakOrder
   } catch (e) {
-    logger.warn({ message: e.message }, 'processEvent failed')
-    return
+    logger.warn({ message: e.message, data }, 'processEvent failed')
+    return null
   }
 }

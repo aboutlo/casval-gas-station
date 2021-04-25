@@ -15,14 +15,25 @@ export const RefillsRoutes: FastifyPluginAsync = async (
   opts
 ): Promise<void> => {
   const { transakOrderService, repos, providers } = fastify
-  const [wallet] = repos.walletRepo.findAll()
 
-  const refillService = new RefillsService({
-    logger: fastify.log,
-    orderService: transakOrderService,
-    wallet,
-    providers,
-  })
+  let refillService: RefillsService
+  const getRefillService = () => {
+    if (refillService) return refillService
+
+    const [wallet] = repos.walletRepo.findAll()
+    if (!wallet) {
+      throw new Error(
+        'No wallet available. Check that DEFAULT_WALLET_MNEMONIC has been set'
+      )
+    }
+    refillService = new RefillsService({
+      logger: fastify.log,
+      orderService: transakOrderService,
+      wallet,
+      providers,
+    })
+    return refillService
+  }
 
   fastify.post<RefillRequest>(
     '',
@@ -41,7 +52,8 @@ export const RefillsRoutes: FastifyPluginAsync = async (
     },
     async function (request, reply) {
       const { address, network } = request.body
-      return refillService
+
+      return getRefillService()
         .refill(address, network as Network)
         .catch((error) => {
           if (error instanceof RefillError) {

@@ -82,7 +82,7 @@ describe('TransakService', () => {
   it('receives an order for ethereum', async () => {
     const order = JWT.sign(
       buildFakeTransakOrder({
-        status: TransakEventStatus.Completed,
+        status: TransakOrderStatus.Completed,
       }),
       'secret'
     )
