@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.3.0](https://github.com/aboutlo/casval-gas-station/compare/v1.2.0...v1.3.0) (2021-04-25)
+
+
+### Features
+
+* log order events even if transakService is disabled ([9363afa](https://github.com/aboutlo/casval-gas-station/commit/9363afad8545150368d553637c52c7ac07c4f04d))
+
 ## [1.2.0](https://github.com/aboutlo/casval-gas-station/compare/v1.1.7...v1.2.0) (2021-04-24)
 
 
