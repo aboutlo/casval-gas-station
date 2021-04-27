@@ -21,18 +21,18 @@ const start: FastifyPluginAsync<AppOptions> = async (
   // through your application
   void fastify.register(AutoLoad, {
     dir: join(__dirname, 'plugins'),
-    ignorePattern: /.*(config).*/,
+    ignorePattern: /.*(config|test).*/,
     options: { ...opts, dependencies: ['config'] },
   })
 
   // This loads all plugins defined in routes
   // define your routes in one of these
   // FIXME LS move plugins in a different directory and drop this autoload
-  void fastify.register(AutoLoad, {
-    dir: join(__dirname, 'services'),
-    ignorePattern: /.*(types|utils|orders|Refills).*/,
-    options: opts,
-  })
+  // void fastify.register(AutoLoad, {
+  //   dir: join(__dirname, 'services'),
+  //   ignorePattern: /.*(types|utils|orders|Refills|OrderService).*/,
+  //   options: opts,
+  // })
 
   // This loads all plugins defined in routes
   // define your routes in one of these
@@ -93,7 +93,7 @@ export async function boot() {
 
   server.listen(server.config.PORT, server.config.BINDING, (err, address) => {
     if (err) {
-      server.log.error(err)
+      console.log(err)
       process.exit(1)
     }
     // console.log(`Server listening at ${address}`)

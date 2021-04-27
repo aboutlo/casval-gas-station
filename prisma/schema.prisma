@@ -1,0 +1,88 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Currency {
+  id       String  @id //symbol@chainId  create the id
+  symbol   String // EUR, DAI
+  name     String // Euro, Multicollateral DAI
+  decimals Int // 18 DAI, 6 USDC, 6 USD, 6 EUR, 6 GBP
+  address  String?
+  network  String? // EthereumMainnet
+  chainId  Int? // 42 rinkeby
+  chain    String?
+
+  sellOrders Order[] @relation("sellCurrency")
+  buyOrders  Order[] @relation("buyCurrency")
+  fees       Order[] @relation("feeCurrency")
+}
+
+model Order {
+  id                     String      @id @default(uuid())
+  kind                   OrderType
+  createdAt              DateTime?   @default(now())
+  updatedAt              DateTime?   @updatedAt
+  status                 OrderStatus @default(CREATED)
+  supplier               Supplier
+  supplierId             String //  supplier order Id
+  supplierIdWithSupplier String      @unique // WORKAROUND Prisma doesn't allows supplier + supplierId as compound  unique index
+  sellCurrencyId         String // sell 200 EUR
+  sellCurrency           Currency    @relation("sellCurrency", fields: [sellCurrencyId], references: [id])
+  sellAmount             Decimal     @db.Decimal(65, 30)
+  buyCurrencyId          String // DAI
+  buyCurrency            Currency    @relation("buyCurrency", fields: [buyCurrencyId], references: [id])
+  buyAmount              Decimal     @db.Decimal(65, 30) // 220
+
+  sellerWallet String? // ramp address
+  buyerWallet  String // wallet address
+
+  paymentMethod PaymentMethod
+  rate          Decimal       @db.Decimal(65, 30)
+
+  feeCurrencyId String // sell 200 EUR ramp and transak both seem to express with the sellCurrency
+  feeCurrency   Currency @relation("feeCurrency", fields: [feeCurrencyId], references: [id])
+
+  supplierFee Decimal @db.Decimal(65, 30)
+  networkFee  Decimal @db.Decimal(65, 30)
+  totalFee    Decimal @db.Decimal(65, 30)
+
+  transactionHash String?
+  events          Json[]
+}
+
+enum OrderStatus {
+  CREATED
+  AWAITING_USER
+  PROCESSING
+  COMPLETED
+  FAILED
+  EXPIRED
+  CANCELLED
+}
+
+enum Supplier {
+  TRANSAK
+  RAMP
+}
+
+enum Network {
+  ETHEREUM
+  POLYGON
+  KOVAN
+  MUMBAI
+}
+
+enum PaymentMethod {
+  BANK_TRANSFER
+  CARD_PAYMENT
+}
+
+enum OrderType {
+  BUY
+  SELL
+}

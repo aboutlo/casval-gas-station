@@ -2,13 +2,14 @@ import { TransakOrder, TransakOrderStatus } from './types'
 import { FastifyLoggerInstance } from 'fastify'
 import { TransakOrderService } from './transak/orders'
 import { Wallet } from 'ethers'
-import { Network, Providers } from '../plugins/providers'
+import { Providers } from '../plugins/providers'
 import { GAS_REQUIRED } from './utils'
 import sendGas from '../utils/sendGas'
 import { NonceManager } from '@ethersproject/experimental'
 import { formatEther, formatUnits, parseUnits } from 'ethers/lib/utils'
 import { waitReceipt } from '../utils/waitReceipt'
 import transferToken from '../utils/transferToken'
+import { Network } from '../models/type'
 
 const isPaid = (o: TransakOrder) => {
   return [

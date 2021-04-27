@@ -1,7 +1,7 @@
 import fp from 'fastify-plugin'
 import S from 'fluent-json-schema'
 import envSchema from 'env-schema'
-import { Network } from './providers'
+import { ChainId, Network } from '../models/type'
 
 export interface SupportPluginOptions {
   // Specify Support plugin options here
@@ -14,10 +14,16 @@ export default fp<SupportPluginOptions>(
     const config = envSchema({
       schema: S.object()
         .prop(
-          'NETWORKS',
+          'CHAIN_IDS',
           S.string()
-            .enum(['kovan,mumbai', 'mainnet,polygon', 'polygon', 'mainnet'])
-            .default('kovan,mumbai')
+            .examples([
+              '1' /* Ethereum-mainnet */,
+              '4' /* Rinkeby */,
+              '42' /* kovan */,
+              '137' /* matic-mainnet */,
+              '80001' /* Mumbai */,
+            ])
+            .default('42,80001')
             .required()
             .raw({ separator: ',' })
         )
@@ -73,7 +79,12 @@ export default fp<SupportPluginOptions>(
         .prop('DEFAULT_WALLET_MNEMONIC', S.string()),
       dotenv: true, // load .env if it's there, default: false
     })
-    fastify.decorate('config', config)
+    fastify.decorate('config', {
+      ...config,
+      CHAIN_IDS: (config.CHAIN_IDS as string[]).map((id: string) =>
+        parseInt(id)
+      ),
+    })
   },
   { name: 'config' }
 )
@@ -82,8 +93,7 @@ export default fp<SupportPluginOptions>(
 declare module 'fastify' {
   export interface FastifyInstance {
     config: {
-      NETWORK: Network
-      NETWORKS: Network[]
+      CHAIN_IDS: ChainId[]
       PORT: number
       BINDING: string
       DEFAULT_WALLET_MNEMONIC: string | undefined

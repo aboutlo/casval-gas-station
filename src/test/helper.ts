@@ -1,7 +1,7 @@
 // This file contains code that we reuse between our tests.
 import Fastify from 'fastify'
 import fp from 'fastify-plugin'
-import App from '../src/app'
+import App from '../app'
 import tap from 'tap'
 
 export type Test = typeof tap['Test']['prototype']

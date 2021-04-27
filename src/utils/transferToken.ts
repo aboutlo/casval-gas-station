@@ -24,7 +24,7 @@ export async function transferToken({
   let transactionResponse: TransactionResponse
   try {
     transactionResponse = await contract.transfer(to, amount)
-    localLogger.info({ hash: transactionResponse.hash }, 'submitted')
+    localLogger.info({ hash: transactionResponse.hash, amount: amount.toString() }, 'submitted')
     return transactionResponse
   } catch (e) {
     localLogger.error(`sendTransaction failed: ${e.message}`)

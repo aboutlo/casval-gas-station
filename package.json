@@ -5,21 +5,35 @@
   "description": "",
   "main": "app.ts",
   "directories": {
-    "test": "test"
+    "test": "src/test"
   },
   "scripts": {
-    "test": "LOG_LEVEL=error TRANSAK_SERVICE=true DEFAULT_WALLET_MNEMONIC= jest --runInBand",
-    "test:watch": "LOG_LEVEL=error TRANSAK_SERVICE=true DEFAULT_WALLET_MNEMONIC= jest --watchAll --detectOpenHandles",
-    "start": "node dist/server.js",
+    "test": "dotenv -e .env.test -- jest ./src  --runInBand --detectOpenHandles",
+    "test:watch": "dotenv -e .env.test -- jest ./src --runInBand --watchAll --detectOpenHandles",
+    "start": "DEBUG=engine node dist/server.js",
+    "start:dev": "ts-node src/server.ts",
     "build": "tsc",
     "dev": "tsc && concurrently -k -p \"[{name}]\" -n \"TypeScript,App\" -c \"yellow.bold,cyan.bold\"  \"tsc -w\" \"node dist/server.js\"",
-    "release": "standard-version"
+    "release": "standard-version",
+    "db:init": "prisma migrate dev --name init",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push --preview-feature",
+    "db:seed": "prisma db seed --preview-feature",
+    "db:migrate": "prisma migrate dev",
+    "db:studio": "prisma studio",
+    "db:format": "prisma format",
+    "db:test:migrate": "dotenv -e .env.test -- prisma migrate dev",
+    "db:test:push": "dotenv -e .env.test -- prisma db push --preview-feature",
+    "db:test:studio": "dotenv -e .env.test -- prisma studio",
+    "db:test:seed": "dotenv -e .env.test -- prisma db seed --preview-feature"
+
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@ethersproject/experimental": "^5.1.1",
+    "@prisma/client": "2.21.2",
     "axios": "^0.21.1",
     "env-schema": "^3.0.1",
     "ethers": "^5.0.32",
@@ -30,7 +44,8 @@
     "fastify-sensible": "^3.1.0",
     "fluent-json-schema": "^2.0.4",
     "jsonwebtoken": "^8.5.1",
-    "pusher-js": "^7.0.3"
+    "pusher-js": "^7.0.3",
+    "ts-node": "^9.1.1"
   },
   "devDependencies": {
     "@types/jest": "^26.0.21",
@@ -41,6 +56,7 @@
     "fastify-tsconfig": "^1.0.1",
     "jest": "^26.6.3",
     "prettier": "^2.2.1",
+    "prisma": "2.21.2",
     "pusher-js-mock": "^0.3.4",
     "standard-version": "^9.2.0",
     "tap": "^14.11.0",

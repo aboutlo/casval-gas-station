@@ -1,16 +1,11 @@
 import fp from 'fastify-plugin'
-import { WalletRepo } from '../models/WalletRepo'
 import { getDefaultProvider } from 'ethers'
 import { BaseProvider, JsonRpcProvider } from '@ethersproject/providers'
+import chains from '../models/chains.json'
+import { ChainId } from '../models/type'
 
 export interface SupportPluginOptions {
   // Specify Support plugin options here
-}
-export enum Network {
-  Mainnet = 'mainnet', // Ethereum,
-  Kovan = 'kovan',
-  Mumbai = 'mumbai',
-  Polygon = 'polygon',
 }
 export type Providers = {
   [key: string]: BaseProvider
@@ -19,7 +14,7 @@ export type Providers = {
 // to export the decorators to the outer scope
 export default fp<SupportPluginOptions>(async (fastify, opts) => {
   const {
-    NETWORKS,
+    CHAIN_IDS,
     ALCHEMY_APY_KEY,
     INFURA_APY_KEY,
     MATICVIGIL_APY_KEY,
@@ -28,23 +23,30 @@ export default fp<SupportPluginOptions>(async (fastify, opts) => {
     ETHERSCAN_APY_KEY,
   } = fastify.config
 
-  const providers = NETWORKS.reduce((memo, network) => {
+  const providers = CHAIN_IDS.reduce((memo, chainId) => {
+    const chain = chains.find((c) => c.chainId === chainId)
+    if (!chain)
+      throw new Error(
+        `Chain "${chainId}" not found in ${chains
+          .map((c) => `${c.chain.toLowerCase()} (${c.chainId})`)
+          .join(', ')}`
+      )
     let provider
-    switch (network) {
-      case 'kovan':
-      case 'mainnet':
-        provider = getDefaultProvider(network, {
+    switch (chainId) {
+      case ChainId.Ethereum:
+      case ChainId.Kovan:
+        provider = getDefaultProvider(chain.network, {
           etherscan: ETHERSCAN_APY_KEY,
           infura: INFURA_APY_KEY,
           alchemy: ALCHEMY_APY_KEY,
         })
         break
-      case 'polygon':
+      case ChainId.Polygon:
         provider = new JsonRpcProvider(
           `${MATICVIGIL_POLYGON_MAINNET_RPC_URL}/${MATICVIGIL_APY_KEY}`
         )
         break
-      case 'mumbai':
+      case ChainId.Mumbai:
         provider = new JsonRpcProvider(
           `${MATICVIGIL_POLYGON_MUMBAI_RPC_URL}/${MATICVIGIL_APY_KEY}`
         )
@@ -52,7 +54,7 @@ export default fp<SupportPluginOptions>(async (fastify, opts) => {
     }
     return {
       ...memo,
-      [network]: provider,
+      [chainId]: provider,
     }
   }, {})
 

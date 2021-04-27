@@ -2,22 +2,22 @@ import Fastify, { FastifyInstance } from 'fastify'
 import JWT from 'jsonwebtoken'
 import waitFor from 'wait-for-expect'
 import Pusher from 'pusher-js'
-import { TransakEventStatus } from '../../src/services/types'
-import { buildFakeTransakOrder, WalletRepoUtils } from '../models/utils'
+import { TransakEventStatus } from '../types'
+import { buildFakeTransakOrder, WalletRepoUtils } from '../../test/utils'
 
-import { TransakOrderStatus } from '../../src/services/types'
-import { sendGas } from '../../src/utils/sendGas'
-import { transferToken } from '../../src/utils/transferToken'
-import { waitReceipt } from '../../src/utils/waitReceipt'
-import { GAS_REQUIRED } from '../../src/services/utils'
-import { PusherMockImplementation } from '../PusherMock'
+import { TransakOrderStatus } from '../types'
+import { sendGas } from '../../utils/sendGas'
+import { transferToken } from '../../utils/transferToken'
+import { waitReceipt } from '../../utils/waitReceipt'
+import { GAS_REQUIRED } from '../utils'
+import { PusherMockImplementation } from '../../test/PusherMock'
 import { formatUnits, parseUnits } from 'ethers/lib/utils'
-import boot from '../../src/app'
+import boot from '../../app'
 
 jest.mock('pusher-js')
-jest.mock('../../src/utils/sendGas')
-jest.mock('../../src/utils/transferToken')
-jest.mock('../../src/utils/waitReceipt')
+jest.mock('../../utils/sendGas')
+jest.mock('../../utils/transferToken')
+jest.mock('../../utils/waitReceipt')
 jest.mock('jsonwebtoken')
 
 const sendGasMock = sendGas as jest.MockedFunction<typeof sendGas>
