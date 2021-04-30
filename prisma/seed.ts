@@ -15,7 +15,7 @@ async function main() {
         chain: null, // Ethereum
       },
       {
-        symbol: 'GPB',
+        symbol: 'GBP',
         name: 'British pound ',
         decimals: 0,
         address: null,

@@ -36,23 +36,27 @@ CREATE TABLE "Order" (
     "status" "OrderStatus" NOT NULL DEFAULT E'CREATED',
     "supplier" "Supplier" NOT NULL,
     "supplierId" TEXT NOT NULL,
+    "supplierIdWithSupplier" TEXT NOT NULL,
     "sellCurrencyId" TEXT NOT NULL,
-    "sellAmount" BIGINT NOT NULL,
+    "sellAmount" DECIMAL(65,30) NOT NULL,
     "buyCurrencyId" TEXT NOT NULL,
-    "buyAmount" BIGINT NOT NULL,
+    "buyAmount" DECIMAL(65,30) NOT NULL,
     "sellerWallet" TEXT,
     "buyerWallet" TEXT NOT NULL,
     "paymentMethod" "PaymentMethod" NOT NULL,
-    "rate" TEXT NOT NULL,
+    "rate" DECIMAL(65,30) NOT NULL,
     "feeCurrencyId" TEXT NOT NULL,
-    "supplierFee" BIGINT NOT NULL,
-    "networkFee" BIGINT NOT NULL,
-    "totalFee" BIGINT NOT NULL,
+    "supplierFee" DECIMAL(65,30) NOT NULL,
+    "networkFee" DECIMAL(65,30) NOT NULL,
+    "totalFee" DECIMAL(65,30) NOT NULL,
     "transactionHash" TEXT,
     "events" JSONB[],
 
     PRIMARY KEY ("id")
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Order.supplierIdWithSupplier_unique" ON "Order"("supplierIdWithSupplier");
 
 -- AddForeignKey
 ALTER TABLE "Order" ADD FOREIGN KEY ("sellCurrencyId") REFERENCES "Currency"("id") ON DELETE CASCADE ON UPDATE CASCADE;

@@ -11,7 +11,7 @@
     "test": "dotenv -e .env.test -- jest ./src  --runInBand --detectOpenHandles",
     "test:watch": "dotenv -e .env.test -- jest ./src --runInBand --watchAll --detectOpenHandles",
     "start": "DEBUG=engine node dist/server.js",
-    "start:dev": "ts-node src/server.ts",
+    "start:staging": "DB_USER=postgres DB_PASS=kGMOrzkFmomD51ca DB_NAME=gas-station DB_HOST=34.76.183.169 node dist/server.js",
     "build": "tsc",
     "dev": "tsc && concurrently -k -p \"[{name}]\" -n \"TypeScript,App\" -c \"yellow.bold,cyan.bold\"  \"tsc -w\" \"node dist/server.js\"",
     "release": "standard-version",
@@ -25,8 +25,9 @@
     "db:test:migrate": "dotenv -e .env.test -- prisma migrate dev",
     "db:test:push": "dotenv -e .env.test -- prisma db push --preview-feature",
     "db:test:studio": "dotenv -e .env.test -- prisma studio",
-    "db:test:seed": "dotenv -e .env.test -- prisma db seed --preview-feature"
-
+    "db:test:seed": "dotenv -e .env.test -- prisma db seed --preview-feature",
+    "db:staging:migrate": "dotenv -e .env.staging -- prisma migrate dev",
+    "db:staging:seed": "dotenv -e .env.staging -- prisma db seed --preview-feature"
   },
   "keywords": [],
   "author": "",
