@@ -10,8 +10,8 @@
   "scripts": {
     "test": "dotenv -e .env.test -- jest ./src  --runInBand --detectOpenHandles",
     "test:watch": "dotenv -e .env.test -- jest ./src --runInBand --watchAll --detectOpenHandles",
-    "start": "DEBUG=engine node dist/server.js",
-    "start:staging": "DB_USER=postgres DB_PASS=kGMOrzkFmomD51ca DB_NAME=gas-station DB_HOST=34.76.183.169 node dist/server.js",
+    "start": "node dist/server.js",
+    "start:staging": "dotenv -e .env.staging -- node dist/server.js",
     "build": "tsc",
     "dev": "tsc && concurrently -k -p \"[{name}]\" -n \"TypeScript,App\" -c \"yellow.bold,cyan.bold\"  \"tsc -w\" \"node dist/server.js\"",
     "release": "standard-version",

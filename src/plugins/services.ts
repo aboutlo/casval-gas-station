@@ -26,23 +26,23 @@ export default fp<SupportPluginOptions>(
     DB_SOCKET_PATH=/cloudsql
     DB_HOST=34.76.183.169
     CLOUD_SQL_CONNECTION_NAME=casval-308710:europe-west1:db-staging*/
-    
-    const host = process.env.DB_HOST ? process.env.DB_HOST :`${process.env.DB_SOCKET_PATH}/${process.env.CLOUD_SQL_CONNECTION_NAME}`
-    console.log(`${process.env.DB_SOCKET_PATH}/${process.env.CLOUD_SQL_CONNECTION_NAME}`)
+
+    // const host = process.env.DB_HOST ? process.env.DB_HOST :`${process.env.DB_SOCKET_PATH}/${process.env.CLOUD_SQL_CONNECTION_NAME}`
+    // console.log(`${process.env.DB_SOCKET_PATH}/${process.env.CLOUD_SQL_CONNECTION_NAME}`)
     // const url = `postgresql://${process.env.DB_USER}:${process.env.DB_PASS}@${host}:5432/${process.env.DB_NAME}?schema=public`
-    const url = `postgresql://${process.env.DB_USER}:${process.env.DB_PASS}@localhost:5432/${process.env.DB_NAME}?schema=public&host=${host}`
+    // const url = `postgresql://${process.env.DB_USER}:${process.env.DB_PASS}@localhost:5432/${process.env.DB_NAME}?host=${host}`
     // const url = `postgresql://${process.env.DB_USER}:${process.env.DB_PASS}@localhost:5432/${process.env.DB_NAME}?schema=public&host=${process.env.DB_HOST}`
-    console.log(url)
-    const prisma = new PrismaClient(
-      {
+    console.log('DATABASE_URL:', process.env.DATABASE_URL)
+    const prisma = new PrismaClient()
+    /*{
         datasources: {
           db: {
             url,
           },
         },
-      }
+      }*/
 
-      /*{log: ['query']}{
+    /*{log: ['query']}{
       log: [
         {
           emit: "event",
@@ -50,7 +50,6 @@ export default fp<SupportPluginOptions>(
         },
       ],
     }*/
-    )
     // prisma.$on("query", async (e) => {
     //   console.log(`${e.query} ${e.params}`)
     // });
