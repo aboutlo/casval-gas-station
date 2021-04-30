@@ -1,7 +1,7 @@
 import { FastifyPluginAsync, RequestGenericInterface } from 'fastify'
 import { RefillError, RefillsService } from '../../services/RefillsService'
-import { Network } from '../../plugins/providers'
 import S from 'fluent-json-schema'
+import { Network } from '../../models/type'
 
 interface RefillRequest extends RequestGenericInterface {
   Body: {

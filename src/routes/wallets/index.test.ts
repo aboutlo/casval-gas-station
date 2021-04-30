@@ -1,9 +1,6 @@
 import Fastify, { FastifyInstance } from 'fastify'
-import fp from 'fastify-plugin'
-import App from '../../src/app'
-import { WalletRepoUtils } from '../models/utils'
-import { Wallet } from 'ethers'
-import boot from '../../src/app'
+import { WalletRepoUtils } from '../../test/utils'
+import boot from '../../app'
 
 const MNEMONIC =
   'stay apart adjust retire frame lumber usual amazing smoke worry outside wash'
@@ -70,8 +67,8 @@ describe('Wallets', () => {
       ids.push(address)
       expect(wallet).toEqual({
         [address]: {
-          kovan: { GAS: '0.0' },
-          mumbai: { GAS: '0.0' },
+          kov: { GAS: '0.0' },
+          maticmum: { GAS: '0.0' },
         },
       })
     })
@@ -86,8 +83,8 @@ describe('Wallets', () => {
       expect(wallets).toEqual([
         {
           [address]: {
-            kovan: { GAS: '0.0' },
-            mumbai: { GAS: '0.0' },
+            kov: { GAS: '0.0' },
+            maticmum: { GAS: '0.0' },
           },
         },
       ])

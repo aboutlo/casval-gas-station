@@ -1,16 +1,16 @@
 import { mocked } from 'ts-jest/utils'
 import { Wallet } from 'ethers'
 
-import { TransakOrderStatus } from '../../src/services/types'
-import { sendGas } from '../../src/utils/sendGas'
-import { transferToken } from '../../src/utils/transferToken'
-import { GAS_REQUIRED, processOrderComplete } from '../../src/services/utils'
+import { TransakOrderStatus } from './types'
+import { sendGas } from '../utils/sendGas'
+import { transferToken } from '../utils/transferToken'
+import { GAS_REQUIRED, processOrderComplete } from './utils'
 import { BigNumber } from '@ethersproject/bignumber'
 import { parseUnits } from 'ethers/lib/utils'
 import { NonceManager } from '@ethersproject/experimental'
-import { Network } from '../../src/plugins/providers'
-import { TransakOrder } from '../../dist/services/types'
-import { buildFakeTransakOrder } from '../models/utils'
+import { TransakOrder } from './types'
+import { buildFakeTransakOrder } from '../test/utils'
+import { ChainId, Network } from '../models/type'
 
 jest.mock('../../src/utils/sendGas')
 jest.mock('../../src/utils/transferToken')
@@ -68,7 +68,7 @@ describe('processOrderComplete', () => {
       processOrderComplete({
         order: orderMock,
         nonceManager,
-        networks: [Network.Kovan],
+        chainIds: [ChainId.Kovan],
         logger: loggerInstance(),
         asset: assetAddressMock,
       })

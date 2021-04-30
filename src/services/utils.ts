@@ -8,8 +8,8 @@ import transferToken from '../utils/transferToken'
 import { formatEther, parseUnits } from 'ethers/lib/utils'
 import { NonceManager } from '@ethersproject/experimental'
 import { waitReceipt } from '../utils/waitReceipt'
-import { Network } from '../plugins/providers'
-import { getNetwork } from './TransakService'
+import { getChainId } from '../plugins/TransakService'
+import { ChainId } from '../models/type'
 
 export const AAVE_WITHDRAW_GAS_LIMIT = 206736 // e.g. https://kovan.etherscan.io/tx/0x03e8c849cf63483463a8a0a926f91358a437fe88c1660901584b364c3f7929d5
 export const UNDERLYING_ALLOW_GAS_LIMIT = 44356 // e.g. https://kovan.etherscan.io/tx/0x03e8c849cf63483463a8a0a926f91358a437fe88c1660901584b364c3f7929d5
@@ -23,7 +23,7 @@ export const GAS_REQUIRED = parseUnits(GAS_MAX_PRICE.toString(), 'gwei').mul(
 type ProcessOrderOptions = {
   order: TransakOrder
   nonceManager: NonceManager
-  networks: Network[]
+  chainIds: ChainId[]
   logger: FastifyLoggerInstance
   asset: string
 }
@@ -45,7 +45,7 @@ type ProcessOrderOptions = {
 export const processOrderComplete = async ({
   order,
   nonceManager,
-  networks,
+                                             chainIds,
   logger,
   asset,
 }: ProcessOrderOptions) => {
@@ -59,8 +59,8 @@ export const processOrderComplete = async ({
   //   pot: '0x001'
   // }
   // check if this address received ether then send more gas
-  const targetNetwork = getNetwork(networks, order.network)
-  if (targetNetwork === 'kovan') {
+  const targetNetwork = getChainId(chainIds, order.network)
+  if (targetNetwork === ChainId.Kovan) {
     const amount = parseUnits(cryptoAmount.toString(), 18).toString()
     logger.info(
       {

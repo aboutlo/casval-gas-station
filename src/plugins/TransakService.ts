@@ -1,11 +1,9 @@
 import Pusher from 'pusher-js'
 import { FastifyPluginAsync } from 'fastify'
 import { NonceManager } from '@ethersproject/experimental'
-import { processEvent, processOrderComplete } from './utils'
-import { TransakOrder, TransakOrderStatus } from './types'
-import { Wallet } from 'ethers'
-import { Network } from '../plugins/providers'
-import jwt from 'jsonwebtoken'
+import { processEvent, processOrderComplete } from '../services/utils'
+import { TransakOrderStatus } from '../services/types'
+import { ChainId, Network } from '../models/type'
 
 export const getNetwork = (
   networks: Network[],
@@ -22,16 +20,31 @@ export const getNetwork = (
   }
 }
 
+export const getChainId = (
+  chains: ChainId[],
+  transakNetwork: 'ethereum' | 'matic' | 'mainnet'
+) => {
+  const isProd =
+    chains.includes(ChainId.Ethereum) && chains.includes(ChainId.Polygon)
+  switch (transakNetwork) {
+    case 'ethereum':
+    case 'mainnet':
+      return isProd ? ChainId.Ethereum : ChainId.Kovan
+    case 'matic':
+      return isProd ? ChainId.Polygon : ChainId.Mumbai
+  }
+}
+
 //  TODO extract this as service and move the init in plugins
 const Transak: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
   const logger = fastify.log.child({ module: 'TransakService' })
-  let nonceManagers: Map<Network, NonceManager>
+  let nonceManagers: Map<ChainId, NonceManager>
   const {
+    CHAIN_IDS,
     TRANSAK_PUSHER_APY_KEY,
     TRANSAK_API_KEY,
     TRANSAK_SECRET,
     KOVAN_TEST_ASSET,
-    NETWORKS,
     TRANSAK_SERVICE,
   } = fastify.config
 
@@ -54,10 +67,13 @@ const Transak: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
   pusher.bind_global((action: string, data: string) => {
     logger.info({ action }, 'received')
 
+    if (action === 'pusher:pong') {
+      return
+    }
+
     const order = processEvent(data, TRANSAK_SECRET, logger)
 
     if (!order) {
-      logger.info(`ignore ${action}`)
       return
     }
 
@@ -78,45 +94,24 @@ const Transak: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
     }
 
     logger.info({ id: order.id, status: order.status }, 'process order...')
-    if (!nonceManagers) {
-      logger.info(
-        { id: order.id, status: order.status },
-        'configure nonceMangers ...'
-      )
-      const [wallet] = fastify.repos.walletRepo.findAll() as Wallet[]
 
-      nonceManagers = NETWORKS.reduce((memo, network) => {
-        const provider = fastify.providers[network]
-        const nonceManager = new NonceManager(
-          new Wallet(wallet.privateKey, provider)
-        )
-        memo.set(network, nonceManager)
-        return memo
-      }, new Map<Network, NonceManager>())
+    // const network = getNetwork(CHAIN_IDS, order.network)
+    const chainId = getChainId(CHAIN_IDS, order.network)
+    logger.info({ chainId }, 'chainId detected')
 
-      logger.info(
-        `${nonceManagers.size} nonceMangers configured for ${NETWORKS.join(
-          ' '
-        )}`
-      )
-    }
-
-    const network = getNetwork(NETWORKS, order.network)
-    logger.info({ network }, 'network detected')
-
-    const nonceManager = nonceManagers.get(network)
+    const nonceManager = fastify.getNonceManagers().get(chainId)
     const asset = KOVAN_TEST_ASSET // FIXME mumbai won't work with this asset
     if (!nonceManager)
       throw new Error(
         `Failed to map ${
           order.network
-        } to one of the available networks: ${NETWORKS.join(' ')}`
+        } to one of the available networks: ${CHAIN_IDS.join(' ')}`
       )
 
     processOrderComplete({
       order,
       nonceManager,
-      networks: NETWORKS,
+      chainIds: CHAIN_IDS,
       asset,
       logger,
     })

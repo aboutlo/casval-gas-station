@@ -1,7 +1,7 @@
 import { Wallet as EtherWallet } from 'ethers'
 import { BigNumber } from '@ethersproject/bignumber'
 import { JsonRpcProvider } from '@ethersproject/providers'
-import { WalletRepo } from '../../src/models/WalletRepo'
+import { WalletRepo } from './WalletRepo'
 import { mocked } from 'ts-jest/utils'
 
 jest.mock('ethers')

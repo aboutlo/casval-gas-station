@@ -1,5 +1,5 @@
 // make it singleton for testing purpose
-import { TransakEventStatus } from '../src/services/types'
+import { TransakEventStatus } from '../services/types'
 
 type Callback = (args?: any[]) => any
 type Listener = { name?: string; callback: Callback }

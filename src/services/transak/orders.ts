@@ -16,7 +16,7 @@ export class TransakOrderService implements Repo<any> {
   // private secret: string
 
   constructor({ logger, baseURL, secret }: TransakOrderServiceOptions) {
-    this.logger = logger.child({ module: 'OrderService' })
+    this.logger = logger.child({ module: 'TransakOrderService' })
     this.axios = axios.create({
       baseURL: `${baseURL}/partners`,
       params: {

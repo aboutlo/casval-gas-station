@@ -1,8 +1,5 @@
 import fp from 'fastify-plugin'
 import { WalletRepo } from '../models/WalletRepo'
-import { getDefaultProvider } from 'ethers'
-import { BaseProvider, JsonRpcProvider } from '@ethersproject/providers'
-import transferToken from '../utils/transferToken'
 
 export interface SupportPluginOptions {
   // Specify Support plugin options here
@@ -10,7 +7,10 @@ export interface SupportPluginOptions {
 
 // The use of fastify-plugin is required to be able
 // to export the decorators to the outer scope
-export default fp<SupportPluginOptions>(async (fastify, opts) => {
+export default fp<SupportPluginOptions>(
+  async (
+    fastify,
+    opts) => {
   const { DEFAULT_WALLET_MNEMONIC } = fastify.config
 
   const walletRepo = new WalletRepo()
