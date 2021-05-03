@@ -26,8 +26,11 @@
     "db:test:push": "dotenv -e .env.test -- prisma db push --preview-feature",
     "db:test:studio": "dotenv -e .env.test -- prisma studio",
     "db:test:seed": "dotenv -e .env.test -- prisma db seed --preview-feature",
-    "db:staging:migrate": "dotenv -e .env.staging -- prisma migrate dev",
-    "db:staging:seed": "dotenv -e .env.staging -- prisma db seed --preview-feature"
+    "db:staging:migrate": "dotenv -e .env.staging -- prisma migrate deploy",
+    "db:staging:seed": "dotenv -e .env.staging -- prisma db seed --preview-feature",
+    "db:production:migrate": "dotenv -e .env.production -- prisma migrate deploy",
+    "db:production:status": "dotenv -e .env.production -- prisma migrate status",
+    "db:production:seed": "dotenv -e .env.production -- prisma db seed --preview-feature"
   },
   "keywords": [],
   "author": "",
