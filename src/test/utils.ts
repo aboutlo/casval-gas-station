@@ -51,6 +51,33 @@ export const WalletRepoUtils = {
   },
 }
 
+export const OrderUtil = {
+  // create: async (app: FastifyInstance, payload: Omit<Order, 'id'>) => {
+  //   return app
+  //     .inject({
+  //       method: 'POST',
+  //       url: `/orders`,
+  //       headers: {
+  //         'content-type': 'application/json',
+  //       },
+  //       payload: JSON.stringify(payload),
+  //     })
+  //     .then((r) => r.json())
+  // },
+  findAll: async (app: FastifyInstance, wallet: string) => {
+    return app
+      .inject({
+        method: 'GET',
+        url: `/orders`,
+        query:  {wallet},
+        headers: {
+          'content-type': 'application/json',
+        },
+      })
+      .then((r) => r.json())
+  },
+}
+
 export const buildFakeTransakOrder = ({
   id = '9cbfa794-ba8a-462c-aef1-8b7534d03491',
   walletAddress = '0x0000000000000001',

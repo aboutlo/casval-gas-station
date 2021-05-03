@@ -34,7 +34,7 @@ describe('OrderService', () => {
   let service: OrderService
   const prisma = new PrismaClient()
 
-  beforeAll(() => {
+  /*beforeAll(() => {
     return prisma.currency.createMany({
       data: [
         buildFakeCurrency({
@@ -53,7 +53,7 @@ describe('OrderService', () => {
     })
   })
 
-  afterAll(() => prisma.currency.deleteMany({}))
+  afterAll(() => prisma.currency.deleteMany({}))*/
 
   beforeEach(() => {
     service = new OrderService({ prisma, logger: mockedLogger() })

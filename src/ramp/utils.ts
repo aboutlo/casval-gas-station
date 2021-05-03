@@ -119,10 +119,12 @@ export const rampPurchaseToOrder = ({
     paymentMethod: PaymentMethod.CARD_PAYMENT,
     sellCurrencyId: sellCurrency.id,
     sellAmount,
-    sellerWallet: purchase.escrowAddress ? purchase.escrowAddress : null,
+    sellerWallet: purchase.escrowAddress
+      ? purchase.escrowAddress.toLowerCase()
+      : null,
     buyCurrencyId: buyCurrency.id,
     buyAmount,
-    buyerWallet: purchase.receiverAddress,
+    buyerWallet: purchase.receiverAddress.toLowerCase(),
     rate: new Decimal(`${purchase.assetExchangeRate}`), // decimal???
     feeCurrencyId: sellCurrency.id,
     supplierFee,

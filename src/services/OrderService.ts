@@ -2,11 +2,6 @@ import { FastifyLoggerInstance } from 'fastify'
 import {
   PrismaClient,
   Order,
-  Currency,
-  Supplier,
-  PaymentMethod,
-  OrderType,
-  OrderStatus,
 } from '@prisma/client'
 
 interface Repo<Payload, Entity> {
@@ -84,6 +79,38 @@ export class OrderService implements Repo<Payload, Order> {
   async findAll(): Promise<Omit<Order, 'events'>[]> {
     this.logger.info('findAll...')
     return this.prisma.order.findMany({
+      select: {
+        id: true,
+        kind: true,
+        createdAt: true,
+        updatedAt: true,
+        status: true,
+        supplier: true,
+        supplierId: true,
+        supplierIdWithSupplier: true,
+        sellCurrencyId: true,
+        sellAmount: true,
+        buyCurrencyId: true,
+        buyAmount: true,
+        sellerWallet: true,
+        buyerWallet: true,
+        paymentMethod: true,
+        rate: true,
+        feeCurrencyId: true,
+        supplierFee: true,
+        networkFee: true,
+        totalFee: true,
+        transactionHash: true,
+      },
+    })
+  }
+
+  async findAllByWallet(wallet: string): Promise<Omit<Order, 'events'>[]> {
+    this.logger.info('findAllByWallet...')
+    return this.prisma.order.findMany({
+      where: {
+        buyerWallet: wallet,
+      },
       select: {
         id: true,
         kind: true,

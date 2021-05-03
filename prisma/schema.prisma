@@ -7,6 +7,13 @@ datasource db {
   url      =  env("DATABASE_URL")
 }
 
+ model Foo {
+   id                 String   @id @default(uuid())
+   amountDecimal      Decimal  @db.Decimal(65, 30)
+   amountString       String
+ }
+
+
 model Currency {
   id       String  @id //symbol@chainId  create the id
   symbol   String // EUR, DAI

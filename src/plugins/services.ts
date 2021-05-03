@@ -32,7 +32,7 @@ export default fp<SupportPluginOptions>(
     // const url = `postgresql://${process.env.DB_USER}:${process.env.DB_PASS}@${host}:5432/${process.env.DB_NAME}?schema=public`
     // const url = `postgresql://${process.env.DB_USER}:${process.env.DB_PASS}@localhost:5432/${process.env.DB_NAME}?host=${host}`
     // const url = `postgresql://${process.env.DB_USER}:${process.env.DB_PASS}@localhost:5432/${process.env.DB_NAME}?schema=public&host=${process.env.DB_HOST}`
-    console.log('DATABASE_URL:', process.env.DATABASE_URL)
+    // console.log('DATABASE_URL:', process.env.DATABASE_URL)
     const prisma = new PrismaClient()
     /*{
         datasources: {

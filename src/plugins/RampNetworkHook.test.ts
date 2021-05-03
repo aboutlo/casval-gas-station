@@ -6,8 +6,8 @@ import { PrismaClient } from '@prisma/client'
 
 import {
   buildFakeCurrency,
-  buildFakeRampNetworkPurchase,
-  WalletRepoUtils,
+  buildFakeRampNetworkPurchase, OrderUtil,
+  WalletRepoUtils
 } from '../test/utils'
 
 async function build() {
@@ -27,20 +27,6 @@ export const HookUtils = {
         },
         payload: JSON.stringify(payload),
       })
-    },
-  },
-
-  order: {
-    findAll: async (app: FastifyInstance, address: string) => {
-      return app
-        .inject({
-          method: 'GET',
-          url: `/orders`,
-          headers: {
-            'content-type': 'application/json',
-          },
-        })
-        .then((r) => r.json())
     },
   },
 }
@@ -98,7 +84,7 @@ describe('RampHook', () => {
       ).resolves.toEqual(expect.objectContaining({ body: 'ok' }))
 
       await expect(
-        HookUtils.order.findAll(app, purchase.receiverAddress)
+        OrderUtil.findAll(app, purchase.receiverAddress)
       ).resolves.toEqual([
         expect.objectContaining({
           id: expect.any(String),
@@ -106,7 +92,7 @@ describe('RampHook', () => {
           updatedAt: expect.any(String),
           buyAmount: '5.941100533426644',
           buyCurrencyId: 'DAI@80001',
-          buyerWallet: '0x6dee0e184c03e7797e424d2619077640bbac881e',
+          buyerWallet: purchase.receiverAddress,
           feeCurrencyId: 'GBP',
           kind: 'BUY',
           networkFee: '0.00869539999999999',
