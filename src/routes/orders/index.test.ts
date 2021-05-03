@@ -1,11 +1,6 @@
-import Fastify, { FastifyInstance } from 'fastify'
-import { PrismaClient, Order } from '@prisma/client'
-import {
-  buildFakeCurrency,
-  buildFakeOrder,
-  OrderUtil,
-  WalletRepoUtils,
-} from '../../test/utils'
+import { FastifyInstance } from 'fastify'
+import { PrismaClient } from '@prisma/client'
+import { buildFakeOrder, OrderUtil } from '../../test/utils'
 import boot from '../../app'
 
 async function config() {
