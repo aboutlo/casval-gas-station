@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.4.0](https://github.com/aboutlo/casval-gas-station/compare/v1.3.0...v1.4.0) (2021-05-03)
+
+
+### Features
+
+* create first draft of order ([#1](https://github.com/aboutlo/casval-gas-station/issues/1)) ([40611bc](https://github.com/aboutlo/casval-gas-station/commit/40611bc54304f3cf21d3950583792e5ec29809bd))
+* orders by wallet ([f631e01](https://github.com/aboutlo/casval-gas-station/commit/f631e012e97ea7a71d15b17938f952858a943fd1))
+
 ## [1.3.0](https://github.com/aboutlo/casval-gas-station/compare/v1.2.0...v1.3.0) (2021-04-25)
 
 
