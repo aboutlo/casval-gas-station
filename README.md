@@ -11,5 +11,5 @@ Staging
 
 Production
 
-    ./cloud_sql_proxy -instances=casval-308710:us-central1:db-production=tcp:5435
+    ./cloud_sql_proxy -instances=casval-308710:europe-west1:db-prod=tcp:5435
 
