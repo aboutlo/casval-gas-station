@@ -15,6 +15,7 @@ import {
 import { formatUnits, parseUnits } from 'ethers/lib/utils'
 import { Chain, Network } from '../models/type'
 import { Decimal } from '@prisma/client/runtime'
+import { RampEvent, RampEventType } from '../plugins/RampNetworkHook'
 
 export const rampStatusToOrderStatus = (
   status: PurchaseStatus
@@ -56,18 +57,19 @@ export const rampStatusToOrderStatus = (
   }
 }
 type RampPurchaseToOrderOption = {
-  purchase: RampPurchase
+  event: RampEvent
   currencies: Currency[]
   chain: Chain
 }
-export const rampPurchaseToOrder = ({
-  purchase,
+export const rampEventToOrder = ({
+  event,
   currencies,
   chain,
 }: RampPurchaseToOrderOption): Omit<
   Order,
   'id' | 'createdAt' | 'updatedAt'
 > => {
+  const { purchase } = event
   const sellCurrency = currencies.find(
     (c) => c.symbol === purchase.fiatCurrency && c.chainId === null
   )
@@ -107,6 +109,15 @@ export const rampPurchaseToOrder = ({
   // console.log('buyAmount prisma:', new Decimal(buyAmount).toString())
 
   const supplierIdWithSupplier = `${Supplier.RAMP}${purchase.id}`
+  let body
+  try {
+    body = JSON.parse(JSON.stringify(purchase))
+  } catch (e) {
+    throw new Error(
+      `Failed to parse the purchase "${purchase.id} with ${e.message}"`
+    )
+  }
+
   return {
     // id: '',
     // createdAt: new Date(purchase.createdAt),
@@ -134,9 +145,8 @@ export const rampPurchaseToOrder = ({
 
     events: [
       {
-        event: TransakEventStatus.Created,
-        supplier: Supplier.RAMP,
-        body: JSON.parse(JSON.stringify(purchase)),
+        event: event.type,
+        body,
       },
     ],
   }

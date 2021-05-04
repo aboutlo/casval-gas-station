@@ -9,11 +9,11 @@ interface PostRequest extends RequestGenericInterface {
 }
 
 export interface RampEvent {
-  type: EventType
+  type: RampEventType
   purchase: RampPurchase
 }
 
-export type EventType = 'CREATED' | 'RELEASED' | 'RETURNED' | 'ERROR'
+export type RampEventType = 'CREATED' | 'RELEASED' | 'RETURNED' | 'ERROR'
 
 const RampNetworkHook: FastifyPluginAsync = async (
   fastify,

@@ -2,9 +2,8 @@ import {
   buildFakeChain,
   buildFakeCurrency,
   buildFakeRampNetworkPurchase,
-  buildFakeTransakOrder,
 } from '../test/utils'
-import { rampPurchaseToOrder } from './utils'
+import { rampEventToOrder } from './utils'
 import {
   Order,
   OrderType,
@@ -14,8 +13,9 @@ import {
 } from '@prisma/client'
 import { TransakEventStatus } from '../services/types'
 import { Decimal } from '@prisma/client/runtime'
+import { RampEvent } from '../plugins/RampNetworkHook'
 
-describe('rampPurchaseToOrder', () => {
+describe('rampEventToOrder', () => {
   const chain = buildFakeChain({
     shortName: 'eth',
     chainId: 1,
@@ -42,8 +42,13 @@ describe('rampPurchaseToOrder', () => {
     const purchase = buildFakeRampNetworkPurchase({
       finalTxHash: undefined,
     })
+    const type = 'CREATED'
+    const event: RampEvent = {
+      type,
+      purchase,
+    }
 
-    const order = rampPurchaseToOrder({ purchase, currencies, chain })
+    const order = rampEventToOrder({ event, currencies, chain })
     expect(order).toEqual<Omit<Order, 'id' | 'createdAt' | 'updatedAt'>>({
       kind: OrderType.BUY,
       status: OrderStatus.CREATED,
@@ -51,13 +56,13 @@ describe('rampPurchaseToOrder', () => {
       supplierId: `${purchase.id}`,
       supplierIdWithSupplier: `${Supplier.RAMP}${purchase.id}`,
       sellCurrencyId: 'GBP',
-      sellAmount: new Decimal(4.34),//'50000',
+      sellAmount: new Decimal(4.34), //'50000',
       sellerWallet: purchase.escrowAddress ? purchase.escrowAddress : null,
       buyCurrencyId: 'DAI@1',
       buyAmount: new Decimal('5.941100533426643564'), //'30000000000000000000000',
       buyerWallet: purchase.receiverAddress,
       paymentMethod: PaymentMethod.CARD_PAYMENT,
-      rate: new Decimal( `${purchase.assetExchangeRate}`), // decimal???
+      rate: new Decimal(`${purchase.assetExchangeRate}`), // decimal???
       feeCurrencyId: 'GBP',
       supplierFee: new Decimal('0.042884203960396'),
       networkFee: new Decimal('0.00869539999999999'),
@@ -65,8 +70,7 @@ describe('rampPurchaseToOrder', () => {
       transactionHash: null,
       events: [
         {
-          event: TransakEventStatus.Created,
-          supplier: Supplier.RAMP,
+          event: type,
           body: JSON.parse(JSON.stringify(purchase)),
         },
       ],

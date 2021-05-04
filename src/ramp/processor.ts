@@ -7,8 +7,8 @@ import sendGas from '../utils/sendGas'
 import transferToken from '../utils/transferToken'
 import { RampEvent } from '../plugins/RampNetworkHook'
 import { OrderService } from '../services/OrderService'
-import { Chain, ChainId, Network } from '../models/type'
-import { rampPurchaseToOrder } from './utils'
+import { Chain, ChainId, } from '../models/type'
+import { rampEventToOrder } from './utils'
 import { Currency } from '@prisma/client'
 
 type ProcessEventOptions = {
@@ -44,7 +44,7 @@ export async function processRampEvent({
         .map((c) => c.chain.toLowerCase())
         .join(', ')}`
     )
-  const order = rampPurchaseToOrder({ purchase, currencies, chain })
+  const order = rampEventToOrder({ event, currencies, chain })
   logger.info(
     {
       chain: chain.name,
