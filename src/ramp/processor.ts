@@ -31,7 +31,7 @@ export async function processRampEvent({
 }: ProcessEventOptions) {
   const { type, purchase } = event
   // console.log(JSON.stringify(event))
-  logger.info({ type, id: purchase.id, status: purchase.status }, 'received')
+  logger.info({ type, id: purchase.id }, 'received')
 
   const chainName = purchase.asset.symbol.toLowerCase().includes('matic')
     ? 'matic'
@@ -52,7 +52,7 @@ export async function processRampEvent({
       buyCurrency: order.buyCurrencyId,
       status: order.status,
     },
-    'mapped to order'
+    'event mapped to order'
   )
   await orderService.createOrUpdate(order)
   const nonceManager = nonceManagers.get(chain.chainId)!
