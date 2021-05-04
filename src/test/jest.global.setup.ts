@@ -4,6 +4,7 @@ import { buildFakeCurrency } from './utils'
 export default async () => {
   console.log('beforeAll')
   const prisma = new PrismaClient()
+  await prisma.order.deleteMany({})
   await prisma.currency.deleteMany({})
   await prisma.currency.createMany({
     data: [
