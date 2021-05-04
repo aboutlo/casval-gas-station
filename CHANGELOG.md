@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.4.1](https://github.com/aboutlo/casval-gas-station/compare/v1.4.0...v1.4.1) (2021-05-04)
+
+
+### Bug Fixes
+
+* misleading log ([fb0588f](https://github.com/aboutlo/casval-gas-station/commit/fb0588f2a05c6ad3b2e4f458d9f197b30bb2d257))
+* save ramp event as it is ([024e1ea](https://github.com/aboutlo/casval-gas-station/commit/024e1ea6892d93eaed76f756bebfb9c3c9886db8))
+
 ## [1.4.0](https://github.com/aboutlo/casval-gas-station/compare/v1.3.0...v1.4.0) (2021-05-03)
 
 
