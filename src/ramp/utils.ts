@@ -142,7 +142,9 @@ export const rampEventToOrder = ({
     networkFee,
     totalFee,
     transactionHash: purchase.finalTxHash ? purchase.finalTxHash : null,
-
+    meta: {
+      purchaseViewToken: purchase.purchaseViewToken,
+    },
     events: [
       {
         event: event.type,

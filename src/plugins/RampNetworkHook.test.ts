@@ -6,8 +6,9 @@ import { PrismaClient } from '@prisma/client'
 
 import {
   buildFakeCurrency,
-  buildFakeRampNetworkPurchase, OrderUtil,
-  WalletRepoUtils
+  buildFakeRampNetworkPurchase,
+  OrderUtil,
+  WalletRepoUtils,
 } from '../test/utils'
 
 async function build() {
@@ -73,9 +74,51 @@ describe('RampHook', () => {
   afterEach(async () => prisma.order.deleteMany({}))
 
   describe('hook', () => {
-    it('hooks a created order', async () => {
+    it('creates an order', async () => {
       const purchase = buildFakeRampNetworkPurchase()
       expect(true).toEqual(true)
+      await expect(
+        HookUtils.hook.push(app, {
+          type: 'CREATED',
+          purchase: purchase,
+        })
+      ).resolves.toEqual(expect.objectContaining({ body: 'ok' }))
+
+      await expect(
+        OrderUtil.findAll(app, purchase.receiverAddress)
+      ).resolves.toEqual([
+        expect.objectContaining({
+          id: expect.any(String),
+          createdAt: expect.any(String),
+          updatedAt: expect.any(String),
+          buyAmount: '5.941100533426644',
+          buyCurrencyId: 'DAI@80001',
+          buyerWallet: purchase.receiverAddress,
+          feeCurrencyId: 'GBP',
+          kind: 'BUY',
+          networkFee: '0.00869539999999999',
+          paymentMethod: 'CARD_PAYMENT',
+          rate: '0.7218225599636798',
+          sellAmount: '4.34',
+          sellCurrencyId: 'GBP',
+          sellerWallet: '0x0001',
+          status: 'CREATED',
+          supplier: 'RAMP',
+          meta: { purchaseViewToken: purchase.purchaseViewToken },
+          supplierFee: '0.042884203960396',
+          supplierId: 'serhc5knxokfwpq',
+          supplierIdWithSupplier: 'RAMPserhc5knxokfwpq',
+          totalFee: '0.051579603960396',
+          transactionHash: null,
+        }),
+      ])
+    })
+
+    it('creates an order ignoring not handled properties', async () => {
+      const purchase = buildFakeRampNetworkPurchase() as any
+      // missing property
+      purchase.missingProperty = 'missing'
+
       await expect(
         HookUtils.hook.push(app, {
           type: 'CREATED',
@@ -108,7 +151,6 @@ describe('RampHook', () => {
           supplierIdWithSupplier: 'RAMPserhc5knxokfwpq',
           totalFee: '0.051579603960396',
           transactionHash: null,
-
         }),
       ])
     })

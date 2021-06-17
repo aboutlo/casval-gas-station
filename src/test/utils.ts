@@ -191,6 +191,7 @@ export const buildFakeRampNetworkPurchase = ({
   cryptoAmount = '5941100533426643564',
   fiatCurrency = 'GBP',
   fiatValue = 4.34,
+  purchaseViewToken = "zvcm3m7cq44cozfo",
   assetExchangeRate = 0.7218225599636798,
   baseRampFee = 0.042884203960396,
   networkFee = 0.00869539999999999,
@@ -215,6 +216,7 @@ export const buildFakeRampNetworkPurchase = ({
     fiatCurrency,
     fiatValue,
     assetExchangeRate,
+    purchaseViewToken,
     baseRampFee,
     networkFee,
     appliedFee,
@@ -247,6 +249,7 @@ export const buildFakeOrder = ({
   transactionHash = '0x12345676543',
   buyerWallet = '0x01',
   sellerWallet = '0x02',
+  meta = {},
   events = [
     {
       event: TransakEventStatus.Created,
@@ -274,6 +277,7 @@ export const buildFakeOrder = ({
     buyerWallet,
     paymentMethod,
     rate,
+    meta,
     feeCurrencyId,
     supplierFee,
     networkFee,

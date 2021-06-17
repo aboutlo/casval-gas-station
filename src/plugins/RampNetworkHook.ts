@@ -48,6 +48,7 @@ const RampNetworkHook: FastifyPluginAsync = async (
                   .prop('decimals', S.integer())
               )
               .prop('receiverAddress', S.string())
+              .prop('purchaseViewToken', S.string())
               .prop('cryptoAmount', S.string())
               .prop('fiatCurrency', S.string())
               .prop('fiatValue', S.number())

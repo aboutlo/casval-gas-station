@@ -1,8 +1,5 @@
 import { FastifyLoggerInstance } from 'fastify'
-import {
-  PrismaClient,
-  Order,
-} from '@prisma/client'
+import { PrismaClient, Order } from '@prisma/client'
 
 interface Repo<Payload, Entity> {
   // create: (payload: Partial<T>) => T
@@ -10,6 +7,30 @@ interface Repo<Payload, Entity> {
   find: (id: string) => Promise<Entity | null>
 }
 
+const SELECT_FIELDS = {
+  id: true,
+  kind: true,
+  createdAt: true,
+  updatedAt: true,
+  status: true,
+  supplier: true,
+  supplierId: true,
+  supplierIdWithSupplier: true,
+  sellCurrencyId: true,
+  sellAmount: true,
+  buyCurrencyId: true,
+  buyAmount: true,
+  sellerWallet: true,
+  buyerWallet: true,
+  paymentMethod: true,
+  rate: true,
+  feeCurrencyId: true,
+  supplierFee: true,
+  networkFee: true,
+  totalFee: true,
+  transactionHash: true,
+  meta: true,
+}
 type Payload = Omit<Order, 'id'>
 type TransakOrderServiceOptions = {
   logger: FastifyLoggerInstance
@@ -79,29 +100,7 @@ export class OrderService implements Repo<Payload, Order> {
   async findAll(): Promise<Omit<Order, 'events'>[]> {
     this.logger.info('findAll...')
     return this.prisma.order.findMany({
-      select: {
-        id: true,
-        kind: true,
-        createdAt: true,
-        updatedAt: true,
-        status: true,
-        supplier: true,
-        supplierId: true,
-        supplierIdWithSupplier: true,
-        sellCurrencyId: true,
-        sellAmount: true,
-        buyCurrencyId: true,
-        buyAmount: true,
-        sellerWallet: true,
-        buyerWallet: true,
-        paymentMethod: true,
-        rate: true,
-        feeCurrencyId: true,
-        supplierFee: true,
-        networkFee: true,
-        totalFee: true,
-        transactionHash: true,
-      },
+      select: SELECT_FIELDS,
     })
   }
 
@@ -111,29 +110,7 @@ export class OrderService implements Repo<Payload, Order> {
       where: {
         buyerWallet: wallet,
       },
-      select: {
-        id: true,
-        kind: true,
-        createdAt: true,
-        updatedAt: true,
-        status: true,
-        supplier: true,
-        supplierId: true,
-        supplierIdWithSupplier: true,
-        sellCurrencyId: true,
-        sellAmount: true,
-        buyCurrencyId: true,
-        buyAmount: true,
-        sellerWallet: true,
-        buyerWallet: true,
-        paymentMethod: true,
-        rate: true,
-        feeCurrencyId: true,
-        supplierFee: true,
-        networkFee: true,
-        totalFee: true,
-        transactionHash: true,
-      },
+      select: SELECT_FIELDS,
     })
   }
 

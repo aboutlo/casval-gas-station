@@ -63,6 +63,7 @@ export interface RampPurchase {
   fiatCurrency: string // three-letter currency code
   fiatValue: number // total value the user pays for the purchase, in fiatCurrency
   assetExchangeRate: number // price of 1 whole token of purchased asset, in fiatCurrency
+  purchaseViewToken: string // used to reopen the view after the order has been created
   baseRampFee: number // base Ramp fee before any modifications, in fiatCurrency
   networkFee: number // network fee for transferring the purchased asset, in fiatCurrency
   appliedFee: number // final fee the user pays (included in fiatValue), in fiatCurrency

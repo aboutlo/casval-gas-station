@@ -7,13 +7,6 @@ datasource db {
   url      =  env("DATABASE_URL")
 }
 
- model Foo {
-   id                 String   @id @default(uuid())
-   amountDecimal      Decimal  @db.Decimal(65, 30)
-   amountString       String
- }
-
-
 model Currency {
   id       String  @id //symbol@chainId  create the id
   symbol   String // EUR, DAI
@@ -44,6 +37,7 @@ model Order {
   buyCurrencyId          String // DAI
   buyCurrency            Currency    @relation("buyCurrency", fields: [buyCurrencyId], references: [id])
   buyAmount              Decimal     @db.Decimal(65, 30) // 220
+  meta                   Json  @default("{}") // any extra attributes that does apply only for a specific supplier (e.g. purchaseViewToken for RAMP)
 
   sellerWallet String? // ramp address
   buyerWallet  String // wallet address

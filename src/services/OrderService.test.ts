@@ -66,4 +66,17 @@ describe('OrderService', () => {
       expect.any(String)
     )
   })
+
+  it('creates an order with some meta', async () => {
+    const meta = { foo: 'foo' }
+    const order = buildFakeOrder({
+      meta,
+    })
+    const id = await service.create(order)
+    await expect(service.find(id)).resolves.toEqual(
+      expect.objectContaining({
+        meta,
+      })
+    )
+  })
 })

@@ -68,6 +68,9 @@ describe('rampEventToOrder', () => {
       networkFee: new Decimal('0.00869539999999999'),
       totalFee: new Decimal('0.051579603960396'),
       transactionHash: null,
+      meta: {
+        purchaseViewToken: purchase.purchaseViewToken,
+      },
       events: [
         {
           event: type,
