@@ -24,7 +24,7 @@ This will bind the port 8080 to a public port via a proxy.
 
 Staging
 
-    ./cloud_sql_proxy -instances=casval-308710:europe-west1:db-staging=tcp:5432
+    ./cloud_sql_proxy -instances=casval-308710:europe-west1:db-staging=tcp:5434
 
 Production
 
@@ -40,4 +40,9 @@ model Order {
 }
 ```
 - Run `yarn db:migrate` this will ask for a migration name and generate all the required files
-- Run `yarn db:test:migrate` to apply the changes to the test database too 
+- Run `yarn db:test:migrate` to apply the changes to the test database too
+
+## deploy
+
+- Create a connection to the `Staging` Postgresql `./cloud_sql_proxy -instances=casval-308710:europe-west1:db-staging=tcp:5434`
+- Run `yarn db:staging:migrate`
