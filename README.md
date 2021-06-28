@@ -46,3 +46,38 @@ model Order {
 
 - Create a connection to the `Staging` Postgresql `./cloud_sql_proxy -instances=casval-308710:europe-west1:db-staging=tcp:5434`
 - Run `yarn db:staging:migrate`
+- Commit and push to update the container
+
+## Continuous Deployment 
+
+### Prerequisites
+Install `aws`
+```bash
+curl "https://awscli.amazonaws.com/AWSCLIV2.pkg" -o "AWSCLIV2.pkg"
+sudo installer -pkg AWSCLIV2.pkg -target /
+```
+Configure `aws`
+
+    aws configure --profile ci
+
+ask for the credentials of `ci`
+
+
+create a ECR repo (if  doesn't exist)
+
+    aws ecr create-repository gas-station --profile ci
+
+build the image
+    
+    docker build -t  345106504809.dkr.ecr.eu-west-1.amazonaws.com/gas-station:latest .
+
+push the image
+
+    aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin 345106504809.dkr.ecr.eu-west-1.amazonaws.com
+
+
+
+
+- https://docs.github.com/en/actions/guides/deploying-to-amazon-elastic-container-service
+- https://github.com/aws-actions/amazon-ecr-login
+
