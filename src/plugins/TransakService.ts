@@ -65,12 +65,11 @@ const Transak: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
   // action can be an orderId or `pusher:pong` as string
   // data is a string encrypted with the transak secret
   pusher.bind_global((action: string, data: string) => {
-    logger.info({ action }, 'received')
-
     if (action === 'pusher:pong') {
+      logger.debug({ action }, 'received')
       return
     }
-
+    logger.info({ action }, 'received')
     const order = processEvent(data, TRANSAK_SECRET, logger)
 
     if (!order) {
