@@ -45,6 +45,7 @@
     "fastify-autoload": "^3.3.1",
     "fastify-cli": "^2.9.1",
     "fastify-plugin": "^3.0.0",
+    "fastify-print-routes": "^0.4.1",
     "fastify-sensible": "^3.1.0",
     "fluent-json-schema": "^2.0.4",
     "jsonwebtoken": "^8.5.1",

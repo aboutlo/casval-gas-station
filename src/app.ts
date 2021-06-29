@@ -2,6 +2,7 @@ import { join } from 'path'
 import AutoLoad, { AutoloadPluginOptions } from 'fastify-autoload'
 import createFastify, { FastifyPluginAsync, LogLevel } from 'fastify'
 import configPlugin from './plugins/config'
+import printRoutes from 'fastify-print-routes'
 
 export type AppOptions = {
   logger: {
@@ -16,6 +17,7 @@ const start: FastifyPluginAsync<AppOptions> = async (
 ): Promise<void> => {
   // Do not touch the following lines
   await fastify.register(configPlugin)
+  await fastify.register(printRoutes)
   // This loads all plugins defined in plugins
   // those should be support plugins that are reused
   // through your application
