@@ -25,6 +25,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Set output
+        id: vars
+        run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -44,12 +48,17 @@ jobs:
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           IMAGE_TAG: ${{ github.sha }}
+          RELEASE_VERSION: ${{ steps.vars.outputs.tag }}
         run: |
+          # print release
+          echo $RELEASE_VERSION
+          echo ${{ steps.vars.outputs.tag }}
           # Build a docker container and
           # push it to ECR so that it can
           # be deployed to ECS.
           docker pull $ECR_REGISTRY/$ECR_REPOSITORY:latest
           docker image tag $ECR_REGISTRY/$ECR_REPOSITORY:latest $ECR_REGISTRY/$ECR_REPOSITORY:production
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:production
+          docker image tag $ECR_REGISTRY/$ECR_REPOSITORY:latest $ECR_REGISTRY/$ECR_REPOSITORY:$RELEASE_VERSION
+          docker image push --all-tags $ECR_REGISTRY/$ECR_REPOSITORY
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:production"
 
