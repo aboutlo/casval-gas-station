@@ -1,36 +1,9 @@
 name: ci
-#on:
-#  push:
-#    branches:
-#      - master
-#jobs:
-#  publish:
-#    name: Install and publish
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/checkout@v2
-#      - uses: actions/setup-node@v1
-#        with:
-#          node-version: 14.x
-#      - uses: expo/expo-github-action@v5
-#        with:
-#          expo-version: 4.x
-#          expo-username: ${{ secrets.EXPO_CLI_USERNAME }}
-#          expo-password: ${{ secrets.EXPO_CLI_PASSWORD }}
-#      #          expo-token: ${{ secrets.EXPO_TOKEN }}
-#      - run: yarn install
-#      - run: yarn expo:ci:publish
-#
-#
-#
-#name: Deploy to Amazon ECS
 
 on:
   push:
     branches:
       - master
-    tags:
-      - v*
 
 env:
   AWS_REGION: eu-west-1                   # set this to your preferred AWS region, e.g. us-west-1
@@ -83,7 +56,7 @@ jobs:
           # be deployed to ECS.
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker image tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:latest
-          docker image push --all-tags  $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker push --all-tags
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
 
 #      - name: Fill in the new image ID in the Amazon ECS task definition
